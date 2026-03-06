@@ -108,7 +108,7 @@
           model_key: practice_checklist.checklist_item
           params:
             - { name: done, value: false }
-            
+
         - key: bulk_close
           label: "Cerrar seleccionadas"
           icon: mdi-check-all
