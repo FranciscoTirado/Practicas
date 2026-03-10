@@ -27,7 +27,7 @@ class PracticeChecklist(Base):
         required=True,
         public=True,
         editable=True,
-        info={"label": "practice_checklist.fields.name"},
+        info={"label": "Nombre del checklist"},
     )
     description = field(
         Text,
