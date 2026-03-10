@@ -38,7 +38,7 @@
 - model: ui.action
   ext_id: practice_checklist_action_items
   fields:
-    name: "Practice - Items"
+    name: "Items de las Checklists"
     title:
       $fallback: "Ítems"
     route: practice/checklist-items

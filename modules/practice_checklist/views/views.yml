@@ -1,7 +1,7 @@
 - model: ui.view
   ext_id: practice_checklist_view_checklist_list
   fields:
-    name: "practice_checklist.checklist - Lista"
+    name: "Lista de Checklists"
     title:
       $fallback: "Checklists - Lista"
     model_key: practice_checklist.checklist
@@ -75,7 +75,7 @@
 - model: ui.view
   ext_id: practice_checklist_view_item_list
   fields:
-    name: "practice_checklist.checklist_item - Lista"
+    name: "Lista de ítems de checklist"
     title:
       $fallback: "Ítems - Lista"
     model_key: practice_checklist.checklist_item
