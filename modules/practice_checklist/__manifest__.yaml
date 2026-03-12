@@ -6,6 +6,7 @@ depends:
 data:
   - data/groups.yml
   - data/acl_rules.yml
+  - data/settings.yml  
   - data/ui_modules.yml
   - views/views.yml
   - views/menu.yml

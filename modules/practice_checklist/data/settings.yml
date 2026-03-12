@@ -1,0 +1,5 @@
+- model: practice_checklist.checklist_settings
+  ext_id: practice_checklist_default_settings
+  fields:
+    auto_close: true
+    default_status: "draft"

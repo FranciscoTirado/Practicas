@@ -167,3 +167,18 @@
           icon: mdi-check-decagram
           method: set_done
           groups: [practice_checklist_group_manager, core_group_superadmin]
+
+- model: ui.view
+  ext_id: practice_checklist_view_settings_form
+  fields:
+    name: "practice_checklist.checklist_settings - Formulario"
+    title:
+      $fallback: "Configuración del Módulo"
+    model_key: practice_checklist.checklist_settings
+    type_id.ext_id: ui.ui_view_type_form
+    definition:
+      groups:
+        - label: "Comportamiento Automático"
+          fields: [auto_close]
+        - label: "Valores por Defecto"
+          fields: [default_status]
