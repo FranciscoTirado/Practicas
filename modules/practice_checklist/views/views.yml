@@ -180,5 +180,4 @@
       groups:
         - label: "Comportamiento Automático"
           fields: [auto_close]
-        - label: "Valores por Defecto"
-          fields: [default_status]
+        

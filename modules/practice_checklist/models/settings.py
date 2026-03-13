@@ -13,14 +13,3 @@ class PracticeChecklistSettings(Base):
         default=True,
         info={"label": "¿Cierre automático?"}
     )
-    default_status = field(
-        String(20),
-        default="draft",
-        info={
-            "label": "Estado por defecto",
-            "choices": [
-                {"label": "Borrador", "value": "draft"},
-                {"label": "Abierto", "value": "open"},
-            ],
-        }
-    )
