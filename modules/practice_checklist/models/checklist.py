@@ -86,7 +86,7 @@ class PracticeChecklistItem(Base):
     __tablename__ = "practice_checklist_item"
     __abstract__ = False
     __model__ = "checklist_item"
-    __service__ = "modules.practice_checklist.services.checklist.PracticeChecklistItemService"
+    __service__ = "modules.practice_checklist.services.checklist_item_override.PracticeChecklistItemAutoCloseService"
 
     __selector_config__ = {
         "label_field": "title",
@@ -154,4 +154,42 @@ class PracticeChecklistItem(Base):
         public=True,
         editable=False,
         info={"label": {"es": "Hecho en", "en": "Done at"}},
+    )
+
+class PracticeChecklistSettings(Base):
+    __tablename__ = "practice_checklist_settings"
+    __abstract__ = False
+    __model__ = "settings"
+    __service__ = "modules.practice_checklist.services.checklist.PracticeChecklistSettingsService"
+
+    __selector_config__ = {
+        "label_field": "key",
+        "search_fields": ["key"],
+        "columns": [
+            {"field": "id", "label": "ID"},
+            {"field": "key", "label": "Clave"},
+            {"field": "value", "label": "Valor"},
+        ],
+    }
+
+    key = field(
+        String(100),
+        required=True,
+        public=True,
+        editable=False,
+        info={"label": {"es": "Clave", "en": "Key"}},
+    )
+    value = field(
+        Text,
+        required=False,
+        public=True,
+        editable=True,
+        info={"label": {"es": "Valor", "en": "Value"}},
+    )
+    description = field(
+        Text,
+        required=False,
+        public=True,
+        editable=True,
+        info={"label": {"es": "Descripción", "en": "Description"}},
     )

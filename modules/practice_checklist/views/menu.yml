@@ -38,7 +38,7 @@
 - model: ui.action
   ext_id: practice_checklist_action_items
   fields:
-    name: "Items de las Checklists"
+    name: "Practice - Items"
     title:
       $fallback: "Ítems"
     route: practice/checklist-items
@@ -63,23 +63,26 @@
     icon: mdi-format-list-bulleted
     parent_id.ext_id: practice_checklist_menu_root
     action_id.ext_id: practice_checklist_action_items
-    
+
 - model: ui.action
   ext_id: practice_checklist_action_settings
   fields:
-    name: "Configuración Checklist"
+    name: "Practice - Settings"
     title:
       $fallback: "Configuración"
     route: practice/settings
-    model_key: practice_checklist.checklist_settings
-    model_path: "practice_checklist/checklist_settings"
+    model_key: practice_checklist.settings
+    model_path: "practice_checklist/settings"
     menu: true
     context:
       allowed_group_ext_ids:
         - practice_checklist_group_manager
         - core_group_superadmin
-    # Forzamos que abra directamente el formulario
+    default_multi_read_view_id.ext_id: practice_checklist_view_settings_list
     default_single_edit_view_id.ext_id: practice_checklist_view_settings_form
+    views.ext_id:
+      - practice_checklist_view_settings_list
+      - practice_checklist_view_settings_form
 
 - model: ui.menuitem
   ext_id: practice_checklist_menu_settings
