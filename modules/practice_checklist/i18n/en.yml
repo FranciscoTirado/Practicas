@@ -1,0 +1,41 @@
+practice_checklist:
+  # Models
+  checklist: "Checklist"
+  checklist_item: "Checklist Item"
+  settings: "Settings"
+
+  # Statuses
+  status:
+    open: "Open"
+    closed: "Closed"
+
+  # Fields
+  fields:
+    name: "Name"
+    description: "Description"
+    status: "Status"
+    owner_id: "Owner"
+    is_public: "Public"
+    closed_at: "Closed at"
+    title: "Item Title"
+    is_done: "Is Done"
+    done_at: "Done at"
+    note: "Note"
+    assigned_user_id: "Assigned to"
+    key: "Key"
+    value: "Value"
+
+  # Actions and Messages
+  actions:
+    close: "Close"
+    reopen: "Reopen"
+    mark_done: "Mark as done"
+    mark_pending: "Mark as pending"
+    force_close: "Force close"
+    close_note: "Closing note"
+
+  messages:
+    auto_item_title: "Initial checklist item"
+    auto_item_note: "Automatically generated on start."
+    error_pending_items: "Cannot close: there are {count} pending items."
+    confirm_close: "Are you sure you want to close this checklist?"

@@ -1,6 +1,5 @@
 from __future__ import annotations
 import datetime as dt
-
 from fastapi import HTTPException
 from app.core.base import BaseService
 from app.core.context import get_current_user_id
@@ -10,94 +9,136 @@ from app.core.services import exposed_action
 from ..models import PracticeChecklist, PracticeChecklistItem, PracticeChecklistSettings
 
 class PracticeChecklistService(BaseService):
-
-    def create(self, obj):  # type: ignore[override]
+    def create(self, obj):
+        """
+        Crea un checklist asignando el owner actual y estado 'open'.
+        Genera un ítem inicial automático.
+        """
         if not isinstance(obj, dict):
             return super().create(obj)
+        
         payload = dict(obj)
         if not payload.get("owner_id"):
             payload["owner_id"] = get_current_user_id()
         if not payload.get("status"):
             payload["status"] = "open"
-        return super().create(payload)
 
+        new_checklist = PracticeChecklist(**payload)
+        self.repo.session.add(new_checklist)
+        # flush para asegurar que new_checklist.id esté disponible
+        self.repo.session.flush()
+
+        initial_item = PracticeChecklistItem(
+            checklist_id=new_checklist.id,
+            title="Item inicial del checklist",
+            is_done=False
+        )
+        self.repo.session.add(initial_item)
+        
+        self.repo.session.commit()
+        self.repo.session.refresh(new_checklist)
+        return serialize(new_checklist)
+    
     @exposed_action("write", groups=["practice_checklist_group_manager", "core_group_superadmin"])
-    def close(self, id: int, close_note: str | None = None, make_public: bool = False) -> dict:
+    def close(self, id: int, close_note: str | None = None, force_close: bool = False, make_public: bool = False) -> dict:
+        """
+        Cierra el checklist.
+        - Si make_public=True, marca is_public.
+        - Si close_note se proporciona, la concatena con el formato esperado por los tests.
+        - Si hay ítems pendientes y force_close=False, lanza 400.
+        """
         rec = self.repo.session.get(PracticeChecklist, int(id))
         if rec is None:
-            raise HTTPException(404, "Checklist not found")
-        rec.status = "closed"
-        rec.is_public = bool(make_public)
-        rec.closed_at = dt.datetime.now(dt.timezone.utc)
+            raise HTTPException(404, "No encontrado")
+
+        # Verificar pendientes
+        pending = [i for i in getattr(rec, "items", []) if not i.is_done]
+        if pending and not force_close:
+            raise HTTPException(400, f"No se puede cerrar: hay {len(pending)} ítems pendientes.")
+
+        # Aplicar visibilidad pública si se solicita
+        if make_public:
+            rec.is_public = True
+
+        # Concatenar nota de cierre con el formato exacto esperado
         if close_note:
-            base = (rec.description or "").strip()
-            rec.description = f"{base}\n\n[Cierre] {close_note}".strip()
-        self.repo.session.add(rec)
+            prefix = f"Nota de cierre: {close_note}"
+            if rec.description:
+                # Mantener la descripción original antes de la nota de cierre
+                rec.description = f"{rec.description}\n\n{prefix}"
+            else:
+                rec.description = prefix
+
+        rec.status = "closed"
+        rec.closed_at = dt.datetime.now(dt.timezone.utc)
         self.repo.session.commit()
-        self.repo.session.refresh(rec)
         return serialize(rec)
 
     @exposed_action("write", groups=["practice_checklist_group_manager", "core_group_superadmin"])
     def reopen(self, id: int) -> dict:
         rec = self.repo.session.get(PracticeChecklist, int(id))
         if rec is None:
-            raise HTTPException(404, "Checklist not found")
+            raise HTTPException(404, "No encontrado")
         rec.status = "open"
         rec.closed_at = None
-        self.repo.session.add(rec)
         self.repo.session.commit()
-        self.repo.session.refresh(rec)
         return serialize(rec)
-
-
+    
 class PracticeChecklistItemService(BaseService):
-
     @exposed_action("write", groups=["practice_checklist_group_manager", "core_group_superadmin"])
     def set_done(self, id: int, done: bool = True, note: str | None = None) -> dict:
+        """
+        Marca un ítem como hecho/pendiente.
+        - Añade nota con prefijo "[Estado] ..." si se proporciona.
+        - Mantiene notas previas después del prefijo.
+        """
         item = self.repo.session.get(PracticeChecklistItem, int(id))
         if item is None:
-            raise HTTPException(404, "Checklist item not found")
+            raise HTTPException(404, "No encontrado")
+
         item.is_done = bool(done)
         item.done_at = dt.datetime.now(dt.timezone.utc) if done else None
+
         if note:
-            base = (item.note or "").strip()
-            item.note = f"{base}\n\n[Estado] {note}".strip()
-        self.repo.session.add(item)
+            prefix = f"[Estado] {note}"
+            if item.note:
+                # Prefijo primero, luego nota previa (como esperan los tests)
+                item.note = f"{prefix}\n\n{item.note}"
+            else:
+                item.note = prefix
+
         self.repo.session.commit()
-        self.repo.session.refresh(item)
         return serialize(item)
 
     @exposed_action("write", groups=["practice_checklist_group_manager", "core_group_superadmin"])
-    def set_done_bulk(self, ids: list[int], done: bool = True): # Cambio id -> ids
+    def set_done_bulk(self, ids: list[int], done: bool = True):
+        """
+        Procesa un bulk llamando a set_done por cada id.
+        Devuelve conteo de procesados y lista de fallos.
+        """
         processed = 0
+        failed = []
         for item_id in ids:
-            # Llamamos a set_done para asegurar que pasamos por los overrides
-            # y añadimos la lógica de notas/fechas de forma unificada.
             try:
+                # Llamamos al método local para mantener comportamiento consistente
                 self.set_done(id=item_id, done=done)
                 processed += 1
-            except HTTPException:
-                continue 
-        
-        return {"status": "success", "processed": processed}
-    
+            except Exception:
+                # Acumular ids fallidos para diagnóstico
+                failed.append(item_id)
+                continue
+        return {"status": "success", "processed": processed, "failed": failed}
+
 class PracticeChecklistSettingsService(BaseService):
-
-    def get_setting(self, key: str, default: str | None = None) -> str | None:
-        """Obtiene el valor de una configuración por clave."""
-        setting = self.repo.session.query(PracticeChecklistSettings).filter_by(key=key).first()
-        if setting:
-            return setting.value
-        return default
-
     @exposed_action("write", groups=["practice_checklist_group_manager", "core_group_superadmin"])
-    def set_setting(self, key: str, value: str) -> dict:
-        """Establece o actualiza una configuración."""
-        setting = self.repo.session.query(PracticeChecklistSettings).filter_by(key=key).first()
-        if setting:
-            setting.value = value
-        else:
-            setting = PracticeChecklistSettings(key=key, value=value)
-        self.repo.session.add(setting)
+    def toggle_setting(self, id: int) -> dict:
+        """
+        Alterna valores booleanos almacenados como string.
+        """
+        setting = self.repo.session.get(PracticeChecklistSettings, id)
+        if not setting:
+            raise HTTPException(404, "Ajuste no encontrado")
+        
+        setting.value = "false" if setting.value == "true" else "true"
         self.repo.session.commit()
-        return {"success": True, "key": key, "value": value}
+        return serialize(setting)

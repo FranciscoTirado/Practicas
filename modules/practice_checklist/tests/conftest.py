@@ -2,32 +2,28 @@
 from __future__ import annotations
 
 import datetime as dt
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
 class FakeChecklist:
     """Simula una instancia de PracticeChecklist en memoria."""
-
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", 1)
-        self.name = kwargs.get("name", "Test checklist")
-        self.description = kwargs.get("description", "")
+        self.name = kwargs.get("name", "Test Checklist")
         self.status = kwargs.get("status", "open")
+        self.description = kwargs.get("description", "")
         self.is_public = kwargs.get("is_public", False)
-        self.owner_id = kwargs.get("owner_id", None)
         self.closed_at = kwargs.get("closed_at", None)
+        self.items = kwargs.get("items", [])
 
 class FakeChecklistItem:
     """Simula una instancia de PracticeChecklistItem en memoria."""
-
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", 1)
         self.checklist_id = kwargs.get("checklist_id", 1)
-        self.title = kwargs.get("title", "Test item")
-        self.note = kwargs.get("note", "")
-        self.assigned_user_id = kwargs.get("assigned_user_id", None)
         self.is_done = kwargs.get("is_done", False)
+        self.note = kwargs.get("note", "")
         self.done_at = kwargs.get("done_at", None)
 
 @pytest.fixture()
