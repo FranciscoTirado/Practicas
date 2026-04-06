@@ -4,8 +4,8 @@ from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import backref, relationship
 from sqlalchemy.dialects.postgresql import UUID
 
-from app.core.base import Base
-from app.core.fields import field
+from app.core.base import Base # type: ignore
+from app.core.fields import field # type: ignore
 
 class PracticeChecklist(Base):
     """

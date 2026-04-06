@@ -8,9 +8,7 @@ data:
   - data/acl_rules.yml
   - data/settings.yml  
   - data/ui_modules.yml
-  - i18n/es.yml
-  - i18n/en.yml
-  - views/menu.yml
   - views/views.yml
+  - views/menu.yml
 migrations: {}
 post_init_hook: null

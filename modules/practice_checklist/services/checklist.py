@@ -1,10 +1,10 @@
 from __future__ import annotations
 import datetime as dt
 from fastapi import HTTPException
-from app.core.base import BaseService
-from app.core.context import get_current_user_id
-from app.core.serializer import serialize
-from app.core.services import exposed_action
+from app.core.base import BaseService # type: ignore
+from app.core.context import get_current_user_id # type: ignore
+from app.core.serializer import serialize # type: ignore
+from app.core.services import exposed_action # type: ignore
 
 from ..models import PracticeChecklist, PracticeChecklistItem, PracticeChecklistSettings
 
@@ -25,7 +25,6 @@ class PracticeChecklistService(BaseService):
 
         new_checklist = PracticeChecklist(**payload)
         self.repo.session.add(new_checklist)
-        # flush para asegurar que new_checklist.id esté disponible
         self.repo.session.flush()
 
         initial_item = PracticeChecklistItem(
@@ -89,8 +88,6 @@ class PracticeChecklistItemService(BaseService):
     def set_done(self, id: int, done: bool = True, note: str | None = None) -> dict:
         """
         Marca un ítem como hecho/pendiente.
-        - Añade nota con prefijo "[Estado] ..." si se proporciona.
-        - Mantiene notas previas después del prefijo.
         """
         item = self.repo.session.get(PracticeChecklistItem, int(id))
         if item is None:
@@ -102,12 +99,12 @@ class PracticeChecklistItemService(BaseService):
         if note:
             prefix = f"[Estado] {note}"
             if item.note:
-                # Prefijo primero, luego nota previa (como esperan los tests)
                 item.note = f"{prefix}\n\n{item.note}"
             else:
                 item.note = prefix
 
         self.repo.session.commit()
+
         return serialize(item)
 
     @exposed_action("write", groups=["practice_checklist_group_manager", "core_group_superadmin"])
@@ -117,17 +114,14 @@ class PracticeChecklistItemService(BaseService):
         Devuelve conteo de procesados y lista de fallos.
         """
         items = (
-            self.repo.session.query(PracticeChecklistItem)
-            .filter(PracticeChecklistItem.id.in_(ids)).all()
+            self.repo.session.query(PracticeChecklistItem).filter(PracticeChecklistItem.id.in_(ids)).all()
         )
-
         processed = 0
         failed = []
 
         for item in items:
             try:
-                item.is_done = bool(done)
-                item.done_at = dt.datetime.now(dt.timezone.utc) if done else None
+                self.set_done(item.id, done=done)
                 processed += 1
             except Exception:
                 failed.append(item.id)
@@ -142,9 +136,9 @@ class PracticeChecklistSettingsService(BaseService):
         Alterna valores booleanos almacenados como string.
         """
         setting = self.repo.session.get(PracticeChecklistSettings, id)
-        if not setting:
-            raise HTTPException(404, "Ajuste no encontrado")
+        if not isinstance(setting.value, bool):
+            raise HTTPException(400, "El valor no es booleano")
         
-        setting.value = "false" if setting.value == "true" else "true"
+        setting.value = not setting.value
         self.repo.session.commit()
         return serialize(setting)

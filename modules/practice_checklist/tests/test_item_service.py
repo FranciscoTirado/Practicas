@@ -13,7 +13,7 @@ class TestSetDone:
         item = FakeChecklistItem(is_done=False)
         mock_session.get.return_value = item
 
-        with patch("modules.practice_checklist.services.checklist.serialize", return_value={"id": 1}):
+        with patch("practice_checklist.services.checklist.serialize", return_value={"id": 1}):
             item_service.set_done(id=1, done=True)
 
         assert item.is_done is True
@@ -26,7 +26,7 @@ class TestSetDone:
         item = FakeChecklistItem(is_done=True, done_at=dt.datetime.now(dt.timezone.utc))
         mock_session.get.return_value = item
 
-        with patch("modules.practice_checklist.services.checklist.serialize", return_value={}):
+        with patch("practice_checklist.services.checklist.serialize", return_value={}):
             item_service.set_done(id=1, done=False)
 
         assert item.is_done is False
@@ -37,7 +37,7 @@ class TestSetDone:
         item = FakeChecklistItem(is_done=False)
         mock_session.get.return_value = item
 
-        with patch("modules.practice_checklist.services.checklist.serialize", return_value={}):
+        with patch("practice_checklist.services.checklist.serialize", return_value={}):
             item_service.set_done(id=1)
 
         assert item.is_done is True
@@ -47,7 +47,7 @@ class TestSetDone:
         item = FakeChecklistItem(note="Nota previa")
         mock_session.get.return_value = item
 
-        with patch("modules.practice_checklist.services.checklist.serialize", return_value={}):
+        with patch("practice_checklist.services.checklist.serialize", return_value={}):
             item_service.set_done(id=1, note="Completado por revisión")
 
         assert "[Estado] Completado por revisión" in item.note
@@ -58,7 +58,7 @@ class TestSetDone:
         item = FakeChecklistItem(note=None)
         mock_session.get.return_value = item
 
-        with patch("modules.practice_checklist.services.checklist.serialize", return_value={}):
+        with patch("practice_checklist.services.checklist.serialize", return_value={}):
             item_service.set_done(id=1, note="Primera nota")
 
         assert item.note == "[Estado] Primera nota"
@@ -68,7 +68,7 @@ class TestSetDone:
         item = FakeChecklistItem(note="Intacta")
         mock_session.get.return_value = item
 
-        with patch("modules.practice_checklist.services.checklist.serialize", return_value={}):
+        with patch("practice_checklist.services.checklist.serialize", return_value={}):
             item_service.set_done(id=1)
 
         assert item.note == "Intacta"

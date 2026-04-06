@@ -2,7 +2,7 @@
   ext_id: practice_checklist_view_checklist_list
   fields:
     name: "practice_checklist.checklist - Lista"
-    title: { $fallback: "Checklists - Lista" }
+    title: { $t: "practice_checklist.views.checklist_list", $fallback: "Checklists - Lista" }
     model_key: practice_checklist.checklist
     type_id.ext_id: ui.ui_view_type_list
     definition:
@@ -42,7 +42,7 @@
   ext_id: practice_checklist_view_checklist_form
   fields:
     name: "practice_checklist.checklist - Formulario"
-    title: { $fallback: "Checklist - Formulario" }
+    title: { $t: "practice_checklist.views.checklist_form", $fallback: "Checklist - Formulario" }
     model_key: practice_checklist.checklist
     type_id.ext_id: ui.ui_view_type_form
     definition:
@@ -75,7 +75,7 @@
   ext_id: practice_checklist_view_item_list
   fields:
     name: "practice_checklist.checklist_item - Lista"
-    title: { $fallback: "Ítems - Lista" }
+    title: { $t: "practice_checklist.views.item_list", $fallback: "Ítems - Lista" }
     model_key: practice_checklist.checklist_item
     type_id.ext_id: ui.ui_view_type_list
     definition:
@@ -134,9 +134,24 @@
           confirm: { text: "¿Quieres marcar los ítems seleccionados como pendientes?" }
 
 - model: ui.view
+  ext_id: practice_checklist_view_item_form
+  fields:
+    name: "practice_checklist.checklist_item - Formulario"
+    title: { $fallback: "Ítem - Formulario" }
+    model_key: practice_checklist.checklist_item
+    type_id.ext_id: ui.ui_view_type_form
+    definition:
+      groups:
+        - label: Básico
+          fields: [checklist, title, note, assigned_user_id, is_done]
+        - label: Auditoría
+          fields: [done_at]
+
+- model: ui.view
   ext_id: practice_checklist_view_settings_list
   fields:
     name: "practice_checklist.settings - Lista"
+    title: { $t: "practice_checklist.views.settings_list", $fallback: "Configuración" }
     model_key: practice_checklist.settings
     type_id.ext_id: ui.ui_view_type_list
     definition:
@@ -158,6 +173,7 @@
   ext_id: practice_checklist_view_settings_form
   fields:
     name: "practice_checklist.settings - Formulario"
+    title: { $t: "practice_checklist.views.settings_form", $fallback: "Ajuste" }
     model_key: practice_checklist.settings
     type_id.ext_id: ui.ui_view_type_form
     definition:

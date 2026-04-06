@@ -4,6 +4,13 @@ practice_checklist:
   checklist_item: "Checklist Item"
   settings: "Settings"
 
+  # Menus (NEW)
+  menus:
+    root: "Practice"
+    checklists: "My Checklists"
+    items: "All Items"
+    settings: "Module Settings"
+
   # Statuses
   status:
     open: "Open"
@@ -39,3 +46,11 @@ practice_checklist:
     auto_item_note: "Automatically generated on start."
     error_pending_items: "Cannot close: there are {count} pending items."
     confirm_close: "Are you sure you want to close this checklist?"
+
+  # Views
+  views:
+    checklist_list: "Checklists - List"
+    checklist_form: "Checklist - Form"
+    item_list: "Items - List"
+    settings_list: "Settings - List"
+    settings_form: "Settings - Form"

@@ -2,6 +2,6 @@
   ext_id: practice_checklist_param_auto_close
   fields:
     key: "practice_checklist.auto_close"
-    value: "true"
+    value: true
     name: "Cierre Automático de Checklists"
     description: "Si está activo, el checklist se cerrará solo al completar todos los ítems."

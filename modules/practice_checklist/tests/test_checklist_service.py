@@ -13,7 +13,7 @@ class TestClose:
         rec = FakeChecklist(status="open")
         mock_session.get.return_value = rec
 
-        with patch("modules.practice_checklist.services.checklist.serialize", return_value={"id": 1}):
+        with patch("practice_checklist.services.checklist.serialize", return_value={"id": 1}):
             result = checklist_service.close(id=1)
 
         assert rec.status == "closed"
@@ -25,7 +25,7 @@ class TestClose:
         rec = FakeChecklist(status="open", is_public=False)
         mock_session.get.return_value = rec
 
-        with patch("modules.practice_checklist.services.checklist.serialize", return_value={}):
+        with patch("practice_checklist.services.checklist.serialize", return_value={}):
             checklist_service.close(id=1, make_public=True)
 
         assert rec.is_public is True
@@ -35,7 +35,7 @@ class TestClose:
         rec = FakeChecklist(description="Desc original")
         mock_session.get.return_value = rec
 
-        with patch("modules.practice_checklist.services.checklist.serialize", return_value={}):
+        with patch("practice_checklist.services.checklist.serialize", return_value={}):
             checklist_service.close(id=1, close_note="Motivo de cierre")
 
         assert "Nota de cierre: Motivo de cierre" in rec.description
@@ -46,7 +46,7 @@ class TestClose:
         rec = FakeChecklist(description=None)
         mock_session.get.return_value = rec
 
-        with patch("modules.practice_checklist.services.checklist.serialize", return_value={}):
+        with patch("practice_checklist.services.checklist.serialize", return_value={}):
             checklist_service.close(id=1, close_note="Nota")
 
         assert rec.description == "Nota de cierre: Nota"
@@ -56,7 +56,7 @@ class TestClose:
         rec = FakeChecklist(description="Intacta")
         mock_session.get.return_value = rec
 
-        with patch("modules.practice_checklist.services.checklist.serialize", return_value={}):
+        with patch("practice_checklist.services.checklist.serialize", return_value={}):
             checklist_service.close(id=1)
 
         assert rec.description == "Intacta"
@@ -66,10 +66,10 @@ class TestClose:
         rec = FakeChecklist()
         mock_session.get.return_value = rec
 
-        with patch("modules.practice_checklist.services.checklist.serialize", return_value={}):
+        with patch("practice_checklist.services.checklist.serialize", return_value={}):
             checklist_service.close(id=1)
 
-        assert rec.closed_at.tzinfo == dt.timezone.utc
+        assert rec.closed_at.tzinfo == dt.timezone.utc # type: ignore
 
     def test_close_not_found_raises_404(self, checklist_service, mock_session):
         mock_session.get.return_value = None
@@ -86,7 +86,7 @@ class TestReopen:
         rec = FakeChecklist(status="closed", closed_at=dt.datetime.now(dt.timezone.utc))
         mock_session.get.return_value = rec
 
-        with patch("modules.practice_checklist.services.checklist.serialize", return_value={"id": 1, "status": "open"}):
+        with patch("practice_checklist.services.checklist.serialize", return_value={"id": 1, "status": "open"}):
             result = checklist_service.reopen(id=1)
 
         assert rec.status == "open"

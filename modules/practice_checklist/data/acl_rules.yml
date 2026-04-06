@@ -16,6 +16,16 @@
     perm_delete: true
 
 - model: core.aclrule
+  ext_id: practice_checklist_acl_item_manager
+  fields:
+    model_key: "practice_checklist.checklist_item"
+    group_id.ext_id: practice_checklist_group_manager
+    perm_read: true
+    perm_write: true
+    perm_create: true
+    perm_delete: true
+
+- model: core.aclrule
   ext_id: practice_checklist_acl_public_read_closed
   fields:
     model_key: "practice_checklist.checklist"
