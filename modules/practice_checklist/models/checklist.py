@@ -38,11 +38,10 @@ class PracticeChecklist(Base):
         required=True,
         public=True,
         editable=True,
-        default="draft",
+        default="open",
         info={
             "label": {"es": "Estado", "en": "Status"},
             "choices": [
-                {"label": "Draft", "value": "draft"},
                 {"label": "Open", "value": "open"},
                 {"label": "Closed", "value": "closed"},
             ],
@@ -163,7 +162,7 @@ class PracticeChecklistSettings(Base):
         info={"label": {"es": "Clave", "en": "Key"}})
     
     value = field(
-        Text, 
+        Boolean, 
         required=False, 
         public=True, 
         editable=True, 

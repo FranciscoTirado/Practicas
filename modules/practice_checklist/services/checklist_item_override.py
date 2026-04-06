@@ -11,10 +11,8 @@ class PracticeChecklistItemAutoCloseService(PracticeChecklistItemService):
         """
         Marca un ítem y, si se completa, dispara la validación de cierre automático.
         """
-        # Ejecutamos la lógica original de la clase padre
         result = super().set_done(id=id, done=done, note=note)
         
-        # Si la acción fue marcar como hecho, evaluamos si hay que cerrar el padre
         if done:
             self._run_auto_close_logic_for_item(id)
             
@@ -26,10 +24,8 @@ class PracticeChecklistItemAutoCloseService(PracticeChecklistItemService):
         Sobrescribimos el bulk para que también dispare el auto-cierre 
         en todos los checklists afectados por los ids procesados.
         """
-        # Llamamos al padre para procesar y obtener lista de ids fallidos si la implementación lo devuelve
         result = super().set_done_bulk(ids=ids, done=done)
         
-        # Si marcamos como hecho, evaluamos auto-cierre por cada checklist afectado
         if done and ids:
             checklist_ids = set()
             for item_id in ids:
@@ -59,23 +55,22 @@ class PracticeChecklistItemAutoCloseService(PracticeChecklistItemService):
         Lógica centralizada: Verifica configuración -> Cuenta pendientes -> Cierra checklist.
         Usa la clave de settings 'practice_checklist.auto_close'.
         """
-        # 1. ¿Está activada la configuración?
         config = self.repo.session.query(PracticeChecklistSettings).filter_by(
-            key="practice_checklist.auto_close"
-        ).first()
-        if not config or (config.value or "").lower() != "true":
+            key="practice_checklist.auto_close").first()
+
+        auto_close_enabled = config.value if config else False
+
+        if not auto_close_enabled:
             return
 
-        # 2. Contar ítems pendientes en ese checklist
         pending_count = self.repo.session.query(PracticeChecklistItem).filter_by(
             checklist_id=checklist_id,
             is_done=False
         ).count()
 
-        # 3. Si no hay pendientes, cerrar el checklist
         if pending_count == 0:
             checklist = self.repo.session.get(PracticeChecklist, checklist_id)
-            if checklist and checklist.status != "closed":
+            if checklist and checklist.status == "open":
                 checklist.status = "closed"
                 checklist.closed_at = dt.datetime.now(dt.timezone.utc)
-                self.repo.session.commit()
+                #   self.repo.session.commit()

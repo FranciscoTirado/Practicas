@@ -116,17 +116,23 @@ class PracticeChecklistItemService(BaseService):
         Procesa un bulk llamando a set_done por cada id.
         Devuelve conteo de procesados y lista de fallos.
         """
+        items = (
+            self.repo.session.query(PracticeChecklistItem)
+            .filter(PracticeChecklistItem.id.in_(ids)).all()
+        )
+
         processed = 0
         failed = []
-        for item_id in ids:
+
+        for item in items:
             try:
-                # Llamamos al método local para mantener comportamiento consistente
-                self.set_done(id=item_id, done=done)
+                item.is_done = bool(done)
+                item.done_at = dt.datetime.now(dt.timezone.utc) if done else None
                 processed += 1
             except Exception:
-                # Acumular ids fallidos para diagnóstico
-                failed.append(item_id)
-                continue
+                failed.append(item.id)
+
+        self.repo.session.commit()
         return {"status": "success", "processed": processed, "failed": failed}
 
 class PracticeChecklistSettingsService(BaseService):
