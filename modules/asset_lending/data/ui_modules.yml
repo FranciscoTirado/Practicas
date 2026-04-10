@@ -2,5 +2,5 @@
   ext_id: asset_lending_ui_module
   fields:
     slug: asset-lending
-    name: Equipamiento
+    name: Asset Lending
     active: true

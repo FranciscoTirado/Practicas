@@ -1,74 +1,150 @@
 from __future__ import annotations
-import datetime as dt
+
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
-from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import UUID
-from app.core.base import Base # type: ignore
-from app.core.fields import field # type: ignore
+from sqlalchemy.orm import relationship 
+from fastapi_users_db_sqlalchemy.generics import GUID #type: ignore
+from app.core.base import Base #type: ignore
+from app.core.fields import field #type: ignore
+
+
+class Location(Base):
+    __tablename__ = "asset_lending_location"
+    __abstract__ = False
+    __model__ = "location"
+    __service__ = "modules.asset_lending.services.lending.LocationService"
+
+    __selector_config__ = {
+        "label_field": "name",
+        "search_fields": ["name", "code"],
+        "columns": [
+            {"field": "id", "label": "ID"},
+            {"field": "name", "label": "Ubicación"},
+            {"field": "code", "label": "Código"},
+            {"field": "is_active", "label": "Activo"},
+        ],
+    }
+
+    name = field(
+        String(100),
+        required=True,
+        public=True,
+        editable=True,
+        info={"label": {"es": "Nombre", "en": "Name"}},
+    )
+    code = field(
+        String(20),
+        required=True,
+        public=True,
+        editable=True,
+        info={"label": {"es": "Código", "en": "Code"}},
+    )
+    is_active = field(
+        Boolean,
+        required=True,
+        public=True,
+        editable=True,
+        default=True,
+        info={"label": {"es": "Activo", "en": "Active"}},
+    )
+
 
 class Asset(Base):
-    """
-    INVENTARIO: Definición técnica de los objetos físicos.
-    Aquí nacen los recursos y se les asigna su ubicación de almacén físico.
-    """
     __tablename__ = "asset_lending_asset"
     __abstract__ = False
     __model__ = "asset"
     __service__ = "modules.asset_lending.services.lending.AssetService"
+
+    __selector_config__ = {
+        "label_field": "name",
+        "search_fields": ["name", "asset_code", "status"],
+        "columns": [
+            {"field": "id", "label": "ID"},
+            {"field": "name", "label": "Recurso"},
+            {"field": "asset_code", "label": "Código"},
+            {"field": "status", "label": "Estado"},
+        ],
+    }
 
     name = field(
         String(180),
         required=True,
         public=True,
         editable=True,
-        info={"label": {"es": "Nombre del producto", "en": "Product Name"}},
+        info={"label": {"es": "Nombre", "en": "Name"}},
     )
-    object_code = field(
+    asset_code = field(
         String(50),
         required=True,
         public=True,
         editable=True,
-        info={"label": {"es": "Código de objeto", "en": "Object Code"}},
-    )
-    storage_location_code = field(
-        String(50),
-        required=True,
-        public=True,
-        editable=True,
-        info={"label": {"es": "Cód. Ubicación Almacenamiento", "en": "Storage Code"}},
-    )
-    description = field(
-        Text,
-        required=False,
-        public=True,
-        editable=True,
-        info={"label": {"es": "Descripción", "en": "Description"}},
+        info={"label": {"es": "Código recurso", "en": "Asset code"}},
     )
     status = field(
         String(20),
         required=True,
         public=True,
         editable=False,
-        default="almacenado",
+        default="available",
         info={
-            "label": {"es": "Estado actual", "en": "Current Status"},
+            "label": {"es": "Estado", "en": "Status"},
             "choices": [
-                {"label": "Almacenado", "value": "almacenado"},
-                {"label": "Prestado", "value": "prestado"},
-                {"label": "En mantenimiento", "value": "mantenimiento"},
+                {"label": "Disponible", "value": "available"},
+                {"label": "Prestado", "value": "loaned"},
+                {"label": "Mantenimiento", "value": "maintenance"},
             ],
         },
     )
+    location_id = field(
+        Integer,
+        ForeignKey("asset_lending_location.id"),
+        required=True,
+        public=True,
+        editable=True,
+        info={"label": {"es": "Ubicación", "en": "Location"}},
+    )
+    location = relationship(
+        "modules.asset_lending.models.lending.Location",
+        foreign_keys=lambda: [Asset.location_id],
+        info={"public": True, "recursive": False, "editable": True},
+    )
+    responsible_user_id = field(
+        GUID,
+        ForeignKey("core_user.id"),
+        required=False,
+        public=True,
+        editable=True,
+        info={"label": {"es": "Responsable", "en": "Responsible"}},
+    )
+    responsible_user = relationship(
+        "User",
+        foreign_keys=lambda: [Asset.responsible_user_id],
+        info={"public": True, "recursive": False, "editable": True},
+    )
+    notes = field(
+        Text,
+        required=False,
+        public=True,
+        editable=True,
+        info={"label": {"es": "Notas", "en": "Notes"}},
+    )
+
 
 class Loan(Base):
-    """
-    TRANSACCIÓN: Registro histórico y activo de los préstamos.
-    Vincula un 'Asset' con un 'User' en una ventana de tiempo.
-    """
     __tablename__ = "asset_lending_loan"
     __abstract__ = False
     __model__ = "loan"
     __service__ = "modules.asset_lending.services.lending.AssetLoanService"
+
+    __selector_config__ = {
+        "label_field": "id",
+        "search_fields": ["status", "checkout_note"],
+        "columns": [
+            {"field": "id", "label": "ID"},
+            {"field": "asset", "label": "Recurso"},
+            {"field": "status", "label": "Estado"},
+            {"field": "checkout_at", "label": "Salida"},
+        ],
+    }
 
     asset_id = field(
         Integer,
@@ -76,39 +152,46 @@ class Loan(Base):
         required=True,
         public=True,
         editable=True,
-        info={"label": {"es": "Equipo prestado", "en": "Borrowed Equipment"}},
+        info={"label": {"es": "Recurso", "en": "Asset"}},
     )
     asset = relationship(
         "modules.asset_lending.models.lending.Asset",
         foreign_keys=lambda: [Loan.asset_id],
-        info={"public": True, "recursive": False}
+        info={"public": True, "recursive": False, "editable": True},
     )
     borrower_user_id = field(
-        UUID,
+        GUID,
         ForeignKey("core_user.id"),
         required=True,
         public=True,
         editable=True,
-        info={"label": {"es": "Solicitante", "en": "Borrower"}},
+        info={"label": {"es": "Prestatario", "en": "Borrower"}},
+    )
+    borrower_user = relationship(
+        "User",
+        foreign_keys=lambda: [Loan.borrower_user_id],
+        info={"public": True, "recursive": False, "editable": True},
     )
     checkout_at = field(
         DateTime(timezone=True),
         required=False,
         public=True,
         editable=False,
-        default=lambda: dt.datetime.now(dt.timezone.utc), # Auto-fecha al crear
+        info={"label": {"es": "Fecha salida", "en": "Checkout at"}},
     )
     due_at = field(
         DateTime(timezone=True),
         required=True,
         public=True,
-        editable=True, # El gestor o usuario debe indicar cuándo lo devuelve
+        editable=True,
+        info={"label": {"es": "Fecha límite", "en": "Due at"}},
     )
     returned_at = field(
         DateTime(timezone=True),
         required=False,
         public=True,
-        editable=False, # Solo se rellena al pulsar el botón de devolver
+        editable=False,
+        info={"label": {"es": "Fecha devolución", "en": "Returned at"}},
     )
     status = field(
         String(20),
@@ -117,13 +200,25 @@ class Loan(Base):
         editable=False,
         default="open",
         info={
-            "label": {"es": "Estado del préstamo", "en": "Status"},
+            "label": {"es": "Estado", "en": "Status"},
             "choices": [
-                {"label": "Activo", "value": "open"},
+                {"label": "Abierto", "value": "open"},
                 {"label": "Devuelto", "value": "returned"},
-                {"label": "Fuera de plazo", "value": "overdue"},
+                {"label": "Vencido", "value": "overdue"},
             ],
         },
     )
-    checkout_note = field(Text, public=True)
-    return_note = field(Text, public=True)
+    checkout_note = field(
+        Text,
+        required=False,
+        public=True,
+        editable=True,
+        info={"label": {"es": "Nota salida", "en": "Checkout note"}},
+    )
+    return_note = field(
+        Text,
+        required=False,
+        public=True,
+        editable=True,
+        info={"label": {"es": "Nota devolución", "en": "Return note"}},
+    )

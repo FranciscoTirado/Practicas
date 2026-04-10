@@ -1,1 +1,1 @@
-from .lending import Asset, Loan  # noqa: F401
+from .lending import Location, Asset, Loan  # noqa: F401
