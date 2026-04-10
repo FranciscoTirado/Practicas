@@ -1,0 +1,12 @@
+# Grupo Lector
+- model: core.group
+  ext_id: asset_lending_group_reader
+  fields:
+    name: "Asset - Lector"
+    parent_id.ext_id: core.core_group_internal_user
+# Grupo Gestor
+- model: core.group
+  ext_id: asset_lending_group_manager
+  fields:
+    name: "Asset - Gestor"
+    parent_id.ext_id: asset_lending_group_reader

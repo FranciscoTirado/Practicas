@@ -1,0 +1,61 @@
+# ==========================================
+# MENÚ PRINCIPAL DEL MÓDULO
+# ==========================================
+- model: ui.menuitem
+  ext_id: asset_lending_menu_root
+  fields:
+    title: "Gestión Interna"
+    icon: mdi-archive-cog
+    color_primary: "#4A7C59"
+
+# ------------------------------------------
+# SECCIÓN: INVENTARIO (Creación y listado base)
+# ------------------------------------------
+- model: ui.action
+  ext_id: asset_lending_action_assets
+  fields:
+    name: "Inventario - Equipos"
+    title:
+      $fallback: "Inventario de Objetos"
+    route: assets/inventory
+    model_key: asset_lending.asset
+    model_path: "asset_lending/asset"
+    menu: true
+    context:
+      allowed_group_ext_ids: [asset_lending_group_manager, core_group_superadmin]
+    default_multi_read_view_id.ext_id: asset_lending_view_asset_list
+    default_single_edit_view_id.ext_id: asset_lending_view_asset_form
+
+- model: ui.menuitem
+  ext_id: asset_lending_menu_assets
+  fields:
+    title: "Inventario"
+    icon: mdi-plus-box-multiple
+    parent_id.ext_id: asset_lending_menu_root
+    action_id.ext_id: asset_lending_action_assets
+
+# ------------------------------------------
+# SECCIÓN: PRÉSTAMOS
+# ------------------------------------------
+- model: ui.action
+  ext_id: asset_lending_action_loans
+  fields:
+    name: "Préstamos - Control"
+    title:
+      $fallback: "Control de Préstamos"
+    route: assets/loans
+    model_key: asset_lending.loan
+    model_path: "asset_lending/loan"
+    menu: true
+    context:
+      allowed_group_ext_ids: [asset_lending_group_manager, core_group_superadmin]
+    default_multi_read_view_id.ext_id: asset_lending_view_loan_list
+    default_single_edit_view_id.ext_id: asset_lending_view_loan_form
+
+- model: ui.menuitem
+  ext_id: asset_lending_menu_loans
+  fields:
+    title: "Préstamos"
+    icon: mdi-handshake-outline
+    parent_id.ext_id: asset_lending_menu_root
+    action_id.ext_id: asset_lending_action_loans

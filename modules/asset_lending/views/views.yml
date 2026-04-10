@@ -1,0 +1,100 @@
+# ==========================================
+#  INVENTARIO (CREACIÓN DE OBJETOS)
+# ==========================================
+# Ventana principal donde se dan de alta los objetos, se les asigna 
+# su código único y su ubicación de almacenamiento física.
+
+- model: ui.view
+  ext_id: asset_lending_view_asset_list
+  fields:
+    name: "asset_lending.asset - Lista"
+    title:
+      $fallback: "Inventario de Equipos"
+    model_key: asset_lending.asset
+    type_id.ext_id: ui.ui_view_type_list
+    definition:
+      columns:
+        - { field: object_code, label: Código Objeto, sortable: true }
+        - { field: name, label: Producto, sortable: true }
+        - { field: storage_location_code, label: Ubicación Almacén }
+        - { field: status, label: Estado, chip: true }
+      actions:
+        - { name: new, type: create, icon: mdi-plus, label: "Nuevo Objeto" }
+        - { name: edit, type: update, icon: mdi-pencil, label: "Editar" }
+      row_actions:
+        - key: mark_maintenance
+          type: service
+          label: "Mantenimiento"
+          icon: mdi-wrench
+          method: mark_maintenance
+          model_key: asset_lending.asset
+          hidden: "item.status !== 'almacenado'"
+        - key: release_maintenance
+          type: service
+          label: "Liberar"
+          icon: mdi-check-circle-outline
+          method: release_maintenance
+          model_key: asset_lending.asset
+          hidden: "item.status !== 'mantenimiento'"
+
+- model: ui.view
+  ext_id: asset_lending_view_asset_form
+  fields:
+    name: "asset_lending.asset - Formulario"
+    title:
+      $fallback: "Ficha Técnica de Objeto"
+    model_key: asset_lending.asset
+    type_id.ext_id: ui.ui_view_type_form
+    definition:
+      groups:
+        - label: Información de Registro
+          fields: [name, object_code, storage_location_code, status]
+        - label: Descripción Detallada
+          fields: [description]
+
+# ==========================================
+#  CONTROL DE PRÉSTAMOS
+# ==========================================
+# Ventana para gestionar la salida de objetos del inventario a usuarios.
+
+- model: ui.view
+  ext_id: asset_lending_view_loan_list
+  fields:
+    name: "asset_lending.loan - Lista"
+    title:
+      $fallback: "Registro de Préstamos"
+    model_key: asset_lending.loan
+    type_id.ext_id: ui.ui_view_type_list
+    definition:
+      columns:
+        - { field: id, label: Ref, width: 70 }
+        - { field: asset, label: Objeto Prestado }
+        - { field: borrower_user_id, label: Usuario }
+        - { field: status, label: Estado Préstamo, chip: true }
+        - { field: checkout_at, label: Salida }
+        - { field: due_at, label: Devolución Límite }
+      actions:
+        - { name: new, type: create, icon: mdi-handshake, label: "Registrar Préstamo" }
+      row_actions:
+        - key: return_asset
+          type: service
+          label: "Devolver"
+          icon: mdi-keyboard-return
+          method: return_asset
+          model_key: asset_lending.loan
+          hidden: "item.status !== 'open'"
+
+- model: ui.view
+  ext_id: asset_lending_view_loan_form
+  fields:
+    name: "asset_lending.loan - Formulario"
+    title:
+      $fallback: "Detalle de Operación"
+    model_key: asset_lending.loan
+    type_id.ext_id: ui.ui_view_type_form
+    definition:
+      groups:
+        - label: Datos del Préstamo
+          fields: [asset_id, borrower_user_id, status]
+        - label: Fechas y Control
+          fields: [checkout_at, due_at, returned_at]
