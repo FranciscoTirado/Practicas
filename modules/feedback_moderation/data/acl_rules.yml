@@ -1,0 +1,40 @@
+# Moderadores: acceso total
+- model: core.aclrule
+  ext_id: feedback_acl_moderator_all
+  fields:
+    model_key: "feedback_moderation.*"
+    group_id.ext_id: feedback_group_moderator
+    perm_read: true
+    perm_write: true
+    perm_create: true
+    perm_delete: true
+
+# Público: crear sugerencias
+- model: core.aclrule
+  ext_id: feedback_acl_public_create_suggestion
+  fields:
+    model_key: "feedback_moderation.suggestion"
+    perm_create: true
+
+# Público: crear comentarios
+- model: core.aclrule
+  ext_id: feedback_acl_public_create_comment
+  fields:
+    model_key: "feedback_moderation.comment"
+    perm_create: true
+
+# Lectura pública de sugerencias publicadas
+- model: core.aclrule
+  ext_id: feedback_acl_public_read_suggestion
+  fields:
+    model_key: "feedback_moderation.suggestion"
+    perm_read: true
+    domain: "[('status','=','published'),('is_public','=',True)]"
+
+# Lectura pública de comentarios publicados
+- model: core.aclrule
+  ext_id: feedback_acl_public_read_comment
+  fields:
+    model_key: "feedback_moderation.comment"
+    perm_read: true
+    domain: "[('status','=','published'),('is_public','=',True)]"

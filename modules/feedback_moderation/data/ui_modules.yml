@@ -1,0 +1,6 @@
+- model: ui.uimodule
+  ext_id: feedback_moderation_ui_module
+  fields:
+    slug: feedback-moderation
+    name: Feedback Moderation
+    active: true

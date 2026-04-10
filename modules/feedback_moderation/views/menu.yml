@@ -1,0 +1,104 @@
+# ==============================
+# MENÚ RAÍZ
+# ==============================
+- model: ui.menuitem
+  ext_id: feedback_moderation_menu_root
+  fields:
+    title: "Feedback"
+    icon: mdi-message-alert-outline
+    color_primary: "#6A1B9A"
+    color_secondary: "#6A1B9A66"
+
+# ==============================
+# SUGERENCIAS
+# ==============================
+- model: ui.action
+  ext_id: feedback_moderation_action_suggestions
+  fields:
+    name: "Feedback - Sugerencias"
+    title:
+      $fallback: "Sugerencias"
+    route: feedback/suggestions
+    model_key: feedback_moderation.suggestion
+    model_path: "feedback_moderation/suggestion"
+    menu: true
+    context:
+      allowed_group_ext_ids:
+        - feedback_group_moderator
+        - feedback_group_viewer
+        - core_group_superadmin
+    default_multi_read_view_id.ext_id: feedback_moderation_view_suggestion_list
+    default_single_edit_view_id.ext_id: feedback_moderation_view_suggestion_form
+    views.ext_id:
+      - feedback_moderation_view_suggestion_list
+      - feedback_moderation_view_suggestion_form
+
+- model: ui.menuitem
+  ext_id: feedback_moderation_menu_suggestions
+  fields:
+    title: "Sugerencias"
+    icon: mdi-lightbulb-outline
+    parent_id.ext_id: feedback_moderation_menu_root
+    action_id.ext_id: feedback_moderation_action_suggestions
+
+# ==============================
+# COMENTARIOS
+# ==============================
+- model: ui.action
+  ext_id: feedback_moderation_action_comments
+  fields:
+    name: "Feedback - Comentarios"
+    title:
+      $fallback: "Comentarios"
+    route: feedback/comments
+    model_key: feedback_moderation.comment
+    model_path: "feedback_moderation/comment"
+    menu: true
+    context:
+      allowed_group_ext_ids:
+        - feedback_group_moderator
+        - core_group_superadmin
+    default_multi_read_view_id.ext_id: feedback_moderation_view_comment_list
+    default_single_edit_view_id.ext_id: feedback_moderation_view_comment_form
+    views.ext_id:
+      - feedback_moderation_view_comment_list
+      - feedback_moderation_view_comment_form
+
+- model: ui.menuitem
+  ext_id: feedback_moderation_menu_comments
+  fields:
+    title: "Comentarios"
+    icon: mdi-comment-outline
+    parent_id.ext_id: feedback_moderation_menu_root
+    action_id.ext_id: feedback_moderation_action_comments
+
+# ==============================
+# ETIQUETAS
+# ==============================
+- model: ui.action
+  ext_id: feedback_moderation_action_tags
+  fields:
+    name: "Feedback - Etiquetas"
+    title:
+      $fallback: "Etiquetas"
+    route: feedback/tags
+    model_key: feedback_moderation.tag
+    model_path: "feedback_moderation/tag"
+    menu: true
+    context:
+      allowed_group_ext_ids:
+        - feedback_group_moderator
+        - core_group_superadmin
+    default_multi_read_view_id.ext_id: feedback_moderation_view_tag_list
+    default_single_edit_view_id.ext_id: feedback_moderation_view_tag_form
+    views.ext_id:
+      - feedback_moderation_view_tag_list
+      - feedback_moderation_view_tag_form
+
+- model: ui.menuitem
+  ext_id: feedback_moderation_menu_tags
+  fields:
+    title: "Etiquetas"
+    icon: mdi-tag-outline
+    parent_id.ext_id: feedback_moderation_menu_root
+    action_id.ext_id: feedback_moderation_action_tags
