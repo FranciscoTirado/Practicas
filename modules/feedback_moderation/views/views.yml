@@ -1,0 +1,322 @@
+# ==============================
+# SUGGESTIONS - LISTA
+# ==============================
+- model: ui.view
+  ext_id: feedback_moderation_view_suggestion_list
+  fields:
+    name: "feedback_moderation.suggestion - Lista"
+    title:
+      $fallback: "Sugerencias - Lista"
+    model_key: feedback_moderation.suggestion
+    type_id.ext_id: ui.ui_view_type_list
+    definition:
+      columns:
+        - { field: id, label: ID, width: 70 }
+        - { field: title, label: Título, sortable: true }
+        - { field: author_name, label: Autor }
+        - { field: author_email, label: Email }
+        - { field: status, label: Estado, chip: true }
+        - { field: is_public, label: Público }
+        - { field: published_at, label: Publicado el }
+      filters:
+        - field: status
+          label: Estado
+      actions:
+        - { name: new, type: create, icon: mdi-plus, label: "Nueva" }
+        - { name: edit, type: update, icon: mdi-pencil, label: "Editar" }
+        - { name: delete, type: delete, icon: mdi-delete, label: "Eliminar" }
+      row_actions:
+        - key: publish
+          type: service
+          label: "Publicar"
+          icon: mdi-check-circle
+          method: publish
+          model_key: feedback_moderation.suggestion
+          groups: [feedback_group_moderator, core_group_superadmin]
+          hidden: "item.status !== 'pending'"
+          confirm:
+            text: "¿Publicar esta sugerencia?"
+          params:
+            - name: note
+              label: "Nota de moderación"
+              type: string
+
+        - key: reject
+          type: service
+          label: "Rechazar"
+          icon: mdi-close-circle
+          method: reject
+          model_key: feedback_moderation.suggestion
+          groups: [feedback_group_moderator, core_group_superadmin]
+          hidden: "item.status !== 'pending'"
+          confirm:
+            text: "¿Rechazar esta sugerencia?"
+          params:
+            - name: note
+              label: "Motivo del rechazo"
+              type: string
+              required: true
+
+        - key: merge
+          type: service
+          label: "Fusionar"
+          icon: mdi-source-merge
+          method: merge
+          model_key: feedback_moderation.suggestion
+          groups: [feedback_group_moderator, core_group_superadmin]
+          hidden: "item.status !== 'pending'"
+          confirm:
+            text: "¿Fusionar esta sugerencia?"
+          params:
+            - name: target_id
+              label: "Sugerencia destino"
+              type: relation
+              model_key: feedback_moderation.suggestion
+            - name: note
+              label: "Nota de moderación"
+              type: string
+
+        - key: reopen
+          type: service
+          label: "Reabrir"
+          icon: mdi-restore
+          method: reopen
+          model_key: feedback_moderation.suggestion
+          groups: [feedback_group_moderator, core_group_superadmin]
+          hidden: "item.status === 'pending'"
+          confirm:
+            text: "¿Reabrir esta sugerencia?"
+
+# ==============================
+# SUGGESTIONS - FORMULARIO
+# ==============================
+- model: ui.view
+  ext_id: feedback_moderation_view_suggestion_form
+  fields:
+    name: "feedback_moderation.suggestion - Formulario"
+    title:
+      $fallback: "Sugerencia - Formulario"
+    model_key: feedback_moderation.suggestion
+    type_id.ext_id: ui.ui_view_type_form
+    definition:
+      groups:
+        - label: Información
+          fields:
+            - title
+            - content
+            - status
+            - is_public
+
+        - label: Autor
+          fields:
+            - author_name
+            - author_email
+
+        - label: Clasificación
+          fields:
+            - tags
+
+        - label: Moderación
+          fields:
+            - moderation_note
+            - reviewed_by_id
+            - published_at
+
+      form_actions:
+        - key: publish
+          type: service
+          label: "Publicar"
+          icon: mdi-check-circle
+          method: publish
+          groups: [feedback_group_moderator, core_group_superadmin]
+          confirm:
+            text: "¿Publicar esta sugerencia?"
+          params:
+            - name: note
+              label: "Nota de moderación"
+              type: string
+
+        - key: reject
+          type: service
+          label: "Rechazar"
+          icon: mdi-close-circle
+          method: reject
+          groups: [feedback_group_moderator, core_group_superadmin]
+          confirm:
+            text: "¿Rechazar esta sugerencia?"
+          params:
+            - name: note
+              label: "Motivo del rechazo"
+              type: string
+              required: true
+
+        - key: merge
+          type: service
+          label: "Fusionar"
+          icon: mdi-source-merge
+          method: merge
+          groups: [feedback_group_moderator, core_group_superadmin]
+          confirm:
+            text: "¿Fusionar esta sugerencia?"
+          params:
+            - name: target_id
+              label: "Sugerencia destino"
+              type: relation
+              model_key: feedback_moderation.suggestion
+            - name: note
+              label: "Nota"
+              type: string
+
+        - key: reopen
+          type: service
+          label: "Reabrir"
+          icon: mdi-restore
+          method: reopen
+          groups: [feedback_group_moderator, core_group_superadmin]
+          confirm:
+            text: "¿Reabrir esta sugerencia?"
+
+# ==============================
+# COMMENTS - LISTA
+# ==============================
+- model: ui.view
+  ext_id: feedback_moderation_view_comment_list
+  fields:
+    name: "feedback_moderation.comment - Lista"
+    title:
+      $fallback: "Comentarios - Lista"
+    model_key: feedback_moderation.comment
+    type_id.ext_id: ui.ui_view_type_list
+    definition:
+      columns:
+        - { field: id, label: ID, width: 70 }
+        - { field: suggestion_id, label: Sugerencia }
+        - { field: content, label: Contenido }
+        - { field: author_email, label: Email }
+        - { field: status, label: Estado, chip: true }
+        - { field: is_public, label: Público }
+        - { field: published_at, label: Publicado el }
+      filters:
+        - field: status
+          label: Estado
+      actions:
+        - { name: new, type: create, icon: mdi-plus, label: "Nuevo" }
+        - { name: edit, type: update, icon: mdi-pencil, label: "Editar" }
+        - { name: delete, type: delete, icon: mdi-delete, label: "Eliminar" }
+      row_actions:
+        - key: publish_comment
+          type: service
+          label: "Publicar"
+          icon: mdi-check-circle
+          method: publish_comment
+          model_key: feedback_moderation.comment
+          groups: [feedback_group_moderator, core_group_superadmin]
+          hidden: "item.status !== 'pending'"
+          confirm:
+            text: "¿Publicar este comentario?"
+
+        - key: reject_comment
+          type: service
+          label: "Rechazar"
+          icon: mdi-close-circle
+          method: reject_comment
+          model_key: feedback_moderation.comment
+          groups: [feedback_group_moderator, core_group_superadmin]
+          hidden: "item.status !== 'pending'"
+          confirm:
+            text: "¿Rechazar este comentario?"
+          params:
+            - name: note
+              label: "Motivo del rechazo"
+              type: string
+              required: true
+
+# ==============================
+# COMMENTS - FORMULARIO
+# ==============================
+- model: ui.view
+  ext_id: feedback_moderation_view_comment_form
+  fields:
+    name: "feedback_moderation.comment - Formulario"
+    title:
+      $fallback: "Comentario - Formulario"
+    model_key: feedback_moderation.comment
+    type_id.ext_id: ui.ui_view_type_form
+    definition:
+      groups:
+        - label: Información
+          fields:
+            - suggestion_id
+            - content
+            - status
+            - is_public
+
+        - label: Autor
+          fields:
+            - author_email
+
+        - label: Moderación
+          fields:
+            - moderation_note
+            - published_at
+
+      form_actions:
+        - key: publish_comment
+          type: service
+          label: "Publicar"
+          icon: mdi-check-circle
+          method: publish_comment
+          groups: [feedback_group_moderator, core_group_superadmin]
+
+        - key: reject_comment
+          type: service
+          label: "Rechazar"
+          icon: mdi-close-circle
+          method: reject_comment
+          groups: [feedback_group_moderator, core_group_superadmin]
+          params:
+            - name: note
+              label: "Motivo del rechazo"
+              type: string
+              required: true
+
+# ==============================
+# TAGS - LISTA
+# ==============================
+- model: ui.view
+  ext_id: feedback_moderation_view_tag_list
+  fields:
+    name: "feedback_moderation.tag - Lista"
+    title:
+      $fallback: "Etiquetas - Lista"
+    model_key: feedback_moderation.tag
+    type_id.ext_id: ui.ui_view_type_list
+    definition:
+      columns:
+        - { field: id, label: ID, width: 70 }
+        - { field: name, label: Nombre }
+        - { field: slug, label: Slug }
+        - { field: color, label: Color }
+      actions:
+        - { name: new, type: create, icon: mdi-plus, label: "Nueva" }
+        - { name: edit, type: update, icon: mdi-pencil, label: "Editar" }
+        - { name: delete, type: delete, icon: mdi-delete, label: "Eliminar" }
+
+# ==============================
+# TAGS - FORMULARIO
+# ==============================
+- model: ui.view
+  ext_id: feedback_moderation_view_tag_form
+  fields:
+    name: "feedback_moderation.tag - Formulario"
+    title:
+      $fallback: "Etiqueta - Formulario"
+    model_key: feedback_moderation.tag
+    type_id.ext_id: ui.ui_view_type_form
+    definition:
+      groups:
+        - label: Información
+          fields:
+            - name
+            - slug
+            - color

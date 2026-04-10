@@ -1,0 +1,1 @@
+from .feedback import Suggestion, Comment, Tag  # noqa: F401
