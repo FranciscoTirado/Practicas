@@ -11,7 +11,7 @@
   fields:
     name: "Assets - Recursos"
     title:
-      $fallback: "Recursos"
+      $fallback: "Recurso"
     route: assets/resources
     model_key: asset_lending.asset
     model_path: "asset_lending/asset"
@@ -40,7 +40,7 @@
   fields:
     name: "Assets - Préstamos"
     title:
-      $fallback: "Préstamos"
+      $fallback: "Préstamo"
     route: assets/loans
     model_key: asset_lending.loan
     model_path: "asset_lending/loan"
@@ -69,7 +69,7 @@
   fields:
     name: "Assets - Ubicaciones"
     title:
-      $fallback: "Ubicaciones"
+      $fallback: "Ubicación"
     route: assets/locations
     model_key: asset_lending.location
     model_path: "asset_lending/location"
@@ -88,7 +88,7 @@
 - model: ui.menuitem
   ext_id: asset_lending_menu_locations
   fields:
-    title: "Ubicaciones"
+    title: "Ubicación"
     icon: mdi-map-marker-outline
     parent_id.ext_id: asset_lending_menu_root
     action_id.ext_id: asset_lending_action_locations

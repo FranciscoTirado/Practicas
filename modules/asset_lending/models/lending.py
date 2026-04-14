@@ -6,7 +6,7 @@ from fastapi_users_db_sqlalchemy.generics import GUID #type: ignore
 from app.core.base import Base #type: ignore
 from app.core.fields import field #type: ignore
 
-
+# Lugar donde se encuentra el recurso, con validación de que exista al crear o actualizar un recurso
 class Location(Base):
     __tablename__ = "asset_lending_location"
     __abstract__ = False
@@ -47,7 +47,7 @@ class Location(Base):
         info={"label": {"es": "Activo", "en": "Active"}},
     )
 
-
+# Flujo del recurso, con validacion de estado
 class Asset(Base):
     __tablename__ = "asset_lending_asset"
     __abstract__ = False
@@ -128,7 +128,8 @@ class Asset(Base):
         info={"label": {"es": "Notas", "en": "Notes"}},
     )
 
-
+# Modelo de registro de cada prestemo, con validación de que el recurso exista y esté disponible,
+#  y que la fecha de devolución sea correcta al crear un préstamo
 class Loan(Base):
     __tablename__ = "asset_lending_loan"
     __abstract__ = False
@@ -184,7 +185,10 @@ class Loan(Base):
         required=True,
         public=True,
         editable=True,
-        info={"label": {"es": "Fecha límite", "en": "Due at"}},
+        info={"label": {"es": "Fecha límite", "en": "Due at"},
+              "format": "DD/MM/YYYY",
+              "placeholder": "DD/MM/YYYY",
+              },
     )
     returned_at = field(
         DateTime(timezone=True),

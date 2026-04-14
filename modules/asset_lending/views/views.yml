@@ -1,7 +1,7 @@
 - model: ui.view
   ext_id: asset_lending_view_location_list
   fields:
-    name: "asset_lending.location - Lista"
+    name: "Ubicaciones - Lista"
     title:
       $fallback: "Ubicaciones - Lista"
     model_key: asset_lending.location
@@ -20,7 +20,7 @@
 - model: ui.view
   ext_id: asset_lending_view_location_form
   fields:
-    name: "asset_lending.location - Formulario"
+    name: "Ubicaciones - Formulario"
     title:
       $fallback: "Ubicación - Formulario"
     model_key: asset_lending.location
@@ -33,7 +33,7 @@
 - model: ui.view
   ext_id: asset_lending_view_asset_list
   fields:
-    name: "asset_lending.asset - Lista"
+    name: "Recursos - Lista"
     title:
       $fallback: "Recursos - Lista"
     model_key: asset_lending.asset
@@ -75,7 +75,7 @@
 - model: ui.view
   ext_id: asset_lending_view_asset_form
   fields:
-    name: "asset_lending.asset - Formulario"
+    name: "Recursos - Formulario"
     title:
       $fallback: "Recurso - Formulario"
     model_key: asset_lending.asset
@@ -107,7 +107,7 @@
 - model: ui.view
   ext_id: asset_lending_view_loan_list
   fields:
-    name: "asset_lending.loan - Lista"
+    name: "Préstamos - Lista"
     title:
       $fallback: "Préstamos - Lista"
     model_key: asset_lending.loan
@@ -117,7 +117,7 @@
         - { field: id, label: ID, width: 70 }
         - { field: asset, label: Recurso }
         - { field: borrower_user_id, label: Prestatario }
-        - { field: status, label: Estado, chip: true }
+        - { field: status, label: Estado, chip: true, chip_colors: {open: "blue", returned: "green", overdue: "red"}}
         - { field: checkout_at, label: Fecha salida }
         - { field: due_at, label: Fecha límite }
         - { field: returned_at, label: Devolución }
@@ -144,7 +144,7 @@
 - model: ui.view
   ext_id: asset_lending_view_loan_form
   fields:
-    name: "asset_lending.loan - Formulario"
+    name: "Préstamos - Formulario"
     title:
       $fallback: "Préstamo - Formulario"
     model_key: asset_lending.loan
@@ -152,7 +152,15 @@
     definition:
       groups:
         - label: Básico
-          fields: [asset_id, borrower_user_id, status]
+          fields: 
+            - asset_id
+            - borrower_user_id
+            - status:
+                chip: true
+                chip_colors: 
+                  open: "blue"
+                  returned: "green"
+                  overdue: "red"
         - label: Fechas
           fields: [checkout_at, due_at, returned_at]
         - label: Notas
