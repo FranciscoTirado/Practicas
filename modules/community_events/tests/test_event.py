@@ -57,7 +57,7 @@ def test_cancel_event_hides_it_from_public(mock_serialize, mock_event_service):
     mock_event_service.repo.session.commit.assert_called_once()
 
 
-@patch("modules.community_events.services.registration_service.serialize")
+@patch("modules.community_events.services.registration.serialize")
 def test_checkin_success_for_confirmed_user(mock_serialize, mock_registration_service):
     reg_stub = Registration(id=10, status="confirmed", checkin_at=None)
     mock_registration_service.repo.session.get.return_value = reg_stub

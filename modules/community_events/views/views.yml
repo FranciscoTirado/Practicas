@@ -37,6 +37,11 @@
           label: "Inscripciones"
           route: "community_events/registrations"
           query: { "event_id": "item.id" }
+
+        - icon: mdi-presentation
+          label: "Sesiones"
+          route: "community_events/sessions"
+          query: { "event_id": "item.id" }
       groups:
         - label: Datos Generales
           fields: [title, slug, summary, description, is_public]
@@ -96,3 +101,34 @@
           fields: [event_id, session_id, attendee_name, attendee_email, attendee_user_id]
         - label: Estado y Control
           fields: [status, checkin_at, notes]
+# ========================
+# SESIONES
+# ========================
+- model: ui.view
+  ext_id: ce_view_session_list
+  fields:
+    name: "Sesiones - Lista"
+    model_key: community_events.session
+    type_id.ext_id: ui.ui_view_type_list
+    definition:
+      columns:
+        - { field: title, label: Título }
+        - { field: event_id, label: Evento }
+        - { field: room, label: Sala }
+        - { field: status, label: Estado, chip: true }
+      actions:
+        - { name: new, type: create, icon: mdi-plus }
+        - { name: edit, type: update, icon: mdi-pencil }
+
+- model: ui.view
+  ext_id: ce_view_session_form
+  fields:
+    name: "Sesiones - Form"
+    model_key: community_events.session
+    type_id.ext_id: ui.ui_view_type_form
+    definition:
+      groups:
+        - label: Sesión
+          fields: [event_id, title, speaker_name, room]
+        - label: Control
+          fields: [capacity, status]

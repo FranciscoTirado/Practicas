@@ -5,7 +5,9 @@
     icon: mdi-ticket-confirmation
     color_primary: "#FF5722"
 
-# Menú: Eventos
+# ========================
+# EVENTOS
+# ========================
 - model: ui.action
   ext_id: ce_action_events
   fields:
@@ -27,7 +29,33 @@
     parent_id.ext_id: ce_menu_root
     action_id.ext_id: ce_action_events
 
-# Menú: Inscripciones
+# ========================
+# SESIONES 
+# ========================
+- model: ui.action
+  ext_id: ce_action_sessions
+  fields:
+    name: "Sesiones"
+    route: community_events/sessions
+    model_key: community_events.session
+    model_path: "community_events/session"
+    menu: true
+    context:
+      allowed_group_ext_ids: [community_events_group_staff, core_group_superadmin]
+    default_multi_read_view_id.ext_id: ce_view_session_list
+    default_single_edit_view_id.ext_id: ce_view_session_form
+
+- model: ui.menuitem
+  ext_id: ce_menu_sessions
+  fields:
+    title: "Sesiones"
+    icon: mdi-presentation
+    parent_id.ext_id: ce_menu_root
+    action_id.ext_id: ce_action_sessions
+
+# ========================
+# INSCRIPCIONES
+# ========================
 - model: ui.action
   ext_id: ce_action_registrations
   fields:

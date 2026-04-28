@@ -23,18 +23,7 @@ class Session(Base):
         public=True,
         editable=True
         )
-    start_at = field(
-        DateTime(timezone=True),
-        required=True,
-        public=True,
-        editable=True
-        )
-    end_at = field(
-        DateTime(timezone=True),
-        required=True,
-        public=True,
-        editable=True
-        )
+ 
     speaker_name = field(
         String(150),
         required=False,

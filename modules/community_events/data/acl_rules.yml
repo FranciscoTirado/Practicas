@@ -19,8 +19,20 @@
       - { field: "is_public", operator: "=", value: true }
 
 - model: core.aclrule
-  ext_id: ce_acl_public_create_registrations
+  ext_id: ce_acl_user_read_own_registration
   fields:
     model_key: "community_events.registration"
+    group_id.ext_id: core.core_group_user
+    perm_read: true
+    domain:
+      - { field: "attendee_user_id", operator: "=", value: "user.id" }
+
+- model: core.aclrule
+  ext_id: ce_acl_public_read_sessions
+  fields:
+    model_key: "community_events.session"
     group_id.ext_id: core.core_group_public
-    perm_create: true
+    perm_read: true
+    domain:
+      - { field: "event_id.status", operator: "=", value: "published" }
+      - { field: "event_id.is_public", operator: "=", value: true }
