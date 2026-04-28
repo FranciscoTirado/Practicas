@@ -28,10 +28,10 @@ class RegistrationService(BaseService):
         if event.status != "published":
             raise HTTPException(400, "El evento no está publicado")
 
-        # ✅ timestamp automático
+        # timestamp automático
         entry["registered_at"] = dt.datetime.now(dt.timezone.utc)
 
-        # ✅ estado por defecto
+        # estado por defecto
         entry["status"] = entry.get("status", "pending")
 
         return super().create(entry)

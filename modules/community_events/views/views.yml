@@ -1,6 +1,4 @@
-# ========================
 # EVENTOS
-# ========================
 - model: ui.view
   ext_id: ce_view_event_list
   fields:
@@ -57,9 +55,7 @@
           hidden: "item.status === 'cancelled'"
           params: [{ name: reason, label: "Motivo", type: string, required: true }]
 
-# ========================
-# INSCRIPCIONES (REGISTRATIONS)
-# ========================
+# INSCRIPCIONES
 - model: ui.view
   ext_id: ce_view_registration_list
   fields:
@@ -73,14 +69,14 @@
         - { field: event_id, label: Evento }
         - { field: status, label: Estado, chip: true }
         - { field: checkin_at, label: Check-in }
-      # ACCIÓN MASIVA (Bulk Action)
+      # ACCIÓN MASIVA
       bulk_actions:
         - key: bulk_checkin
           type: service
           label: "Validar Check-in Masivo"
           icon: mdi-qrcode-scan
           method: bulk_checkin
-      # ACCIONES DE FILA (Row Actions)
+      # ACCIONES DE FILA
       row_actions:
         - { key: confirm, type: service, label: "Confirmar", method: confirm, icon: mdi-check-circle, hidden: "item.status !== 'pending'" }
         - { key: waitlist, type: service, label: "A Espera", method: move_waitlist, icon: mdi-clock-outline, hidden: "item.status === 'waitlist'" }
@@ -101,9 +97,8 @@
           fields: [event_id, session_id, attendee_name, attendee_email, attendee_user_id]
         - label: Estado y Control
           fields: [status, checkin_at, notes]
-# ========================
+
 # SESIONES
-# ========================
 - model: ui.view
   ext_id: ce_view_session_list
   fields:

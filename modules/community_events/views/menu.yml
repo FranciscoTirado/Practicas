@@ -5,9 +5,7 @@
     icon: mdi-ticket-confirmation
     color_primary: "#FF5722"
 
-# ========================
 # EVENTOS
-# ========================
 - model: ui.action
   ext_id: ce_action_events
   fields:
@@ -29,9 +27,7 @@
     parent_id.ext_id: ce_menu_root
     action_id.ext_id: ce_action_events
 
-# ========================
 # SESIONES 
-# ========================
 - model: ui.action
   ext_id: ce_action_sessions
   fields:
@@ -53,9 +49,7 @@
     parent_id.ext_id: ce_menu_root
     action_id.ext_id: ce_action_sessions
 
-# ========================
 # INSCRIPCIONES
-# ========================
 - model: ui.action
   ext_id: ce_action_registrations
   fields:
