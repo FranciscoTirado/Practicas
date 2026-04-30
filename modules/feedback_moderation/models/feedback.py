@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from sqlalchemy import Column, Boolean, DateTime, ForeignKey, Integer, String, Table, Text
 from sqlalchemy.orm import relationship
-from fastapi_users_db_sqlalchemy.generics import GUID  # type: ignore
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.core.base import Base  # type: ignore
 from app.core.fields import field  # type: ignore
@@ -13,6 +13,7 @@ suggestion_tag_rel = Table(
     Base.metadata,
     Column("suggestion_id", Integer,ForeignKey("feedback_moderation_suggestion.id"),primary_key=True),
     Column("tag_id", Integer, ForeignKey("feedback_moderation_tag.id"), primary_key=True),
+    extend_existing=True,
 )
 
 class Suggestion(Base):
@@ -47,16 +48,18 @@ class Suggestion(Base):
     is_public = field(Boolean, default=True, public=True, editable=True)
     moderation_note = field(Text, required=False, public=False, editable=False)
 
+    votes_count = field(Integer, default=0, public=True, editable=False, info={"label": {"es": "Votos"}})
+
     published_at = field(DateTime(timezone=True), required=False, public=True, editable=False)
     reviewed_by_id = field(
-        GUID,
+        UUID,
         ForeignKey("core_user.id"),
         required=False,
         public=False,
         editable=False,
     )
 
-    reviewed_by = relationship("User")
+    reviewed_by = relationship("app.modules.core.models.user.User")
 
     tags = relationship(
     "modules.feedback_moderation.models.feedback.Tag",

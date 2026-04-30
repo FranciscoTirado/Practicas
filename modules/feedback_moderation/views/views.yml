@@ -1,6 +1,4 @@
-# ==============================
 # SUGGESTIONS - LISTA
-# ==============================
 - model: ui.view
   ext_id: feedback_moderation_view_suggestion_list
   fields:
@@ -87,9 +85,7 @@
           confirm:
             text: "¿Reabrir esta sugerencia?"
 
-# ==============================
 # SUGGESTIONS - FORMULARIO
-# ==============================
 - model: ui.view
   ext_id: feedback_moderation_view_suggestion_form
   fields:
@@ -176,9 +172,7 @@
           confirm:
             text: "¿Reabrir esta sugerencia?"
 
-# ==============================
 # COMMENTS - LISTA
-# ==============================
 - model: ui.view
   ext_id: feedback_moderation_view_comment_list
   fields:
@@ -231,9 +225,7 @@
               type: string
               required: true
 
-# ==============================
 # COMMENTS - FORMULARIO
-# ==============================
 - model: ui.view
   ext_id: feedback_moderation_view_comment_form
   fields:
@@ -280,9 +272,7 @@
               type: string
               required: true
 
-# ==============================
 # TAGS - LISTA
-# ==============================
 - model: ui.view
   ext_id: feedback_moderation_view_tag_list
   fields:
@@ -302,9 +292,7 @@
         - { name: edit, type: update, icon: mdi-pencil, label: "Editar" }
         - { name: delete, type: delete, icon: mdi-delete, label: "Eliminar" }
 
-# ==============================
 # TAGS - FORMULARIO
-# ==============================
 - model: ui.view
   ext_id: feedback_moderation_view_tag_form
   fields:

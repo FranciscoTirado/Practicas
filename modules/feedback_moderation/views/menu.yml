@@ -1,6 +1,4 @@
-# ==============================
 # MENÚ RAÍZ
-# ==============================
 - model: ui.menuitem
   ext_id: feedback_moderation_menu_root
   fields:
@@ -9,9 +7,7 @@
     color_primary: "#6A1B9A"
     color_secondary: "#6A1B9A66"
 
-# ==============================
 # SUGERENCIAS
-# ==============================
 - model: ui.action
   ext_id: feedback_moderation_action_suggestions
   fields:
@@ -41,9 +37,7 @@
     parent_id.ext_id: feedback_moderation_menu_root
     action_id.ext_id: feedback_moderation_action_suggestions
 
-# ==============================
 # COMENTARIOS
-# ==============================
 - model: ui.action
   ext_id: feedback_moderation_action_comments
   fields:
@@ -72,9 +66,7 @@
     parent_id.ext_id: feedback_moderation_menu_root
     action_id.ext_id: feedback_moderation_action_comments
 
-# ==============================
 # ETIQUETAS
-# ==============================
 - model: ui.action
   ext_id: feedback_moderation_action_tags
   fields:
