@@ -1,12 +1,12 @@
 import pytest
 from unittest.mock import MagicMock, patch
 from fastapi import HTTPException
-from modules.asset_lending.services.lending import AssetLoanService
+from modules.asset_lending.services.lending import LoanService
 from modules.asset_lending.models.lending import Asset, Loan
 
 @pytest.fixture
 def mock_service():
-    service = AssetLoanService(MagicMock())
+    service = LoanService(MagicMock())
     service.repo = MagicMock()
     service.repo.session = MagicMock()
     return service

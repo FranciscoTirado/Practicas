@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -22,6 +22,8 @@ class Location(Base):
         info={"public": False}
     )
 
+    code = field(String(50), required=False, public=True, editable=True)
+    is_active = field(Boolean, default=True, required=True, public=True)
 
 class Asset(Base):
     __tablename__ = "asset_lending_asset"
@@ -47,7 +49,7 @@ class Asset(Base):
     )
 
     location = relationship(
-        "modules.asset_lending.models.lending.Asset",
+        "modules.asset_lending.models.lending.Location",
         back_populates="assets",
         info={"public": True, "recursive": False},
     )
@@ -64,6 +66,7 @@ class Asset(Base):
         info={"public": True, "recursive": False},
     )
 
+    notes = field(Text, required=False, public=True, editable=True)
 
 class Loan(Base):
     __tablename__ = "asset_lending_loan"

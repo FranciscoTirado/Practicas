@@ -53,7 +53,7 @@ class AssetService(BaseService):
         return serialize(asset)
 
 # Clase principal de servicios para préstamos, con validaciones al crear un préstamo y marcar un préstamo como devuelto
-class AssetLoanService(BaseService):
+class LoanService(BaseService):
     from ..models.lending import Loan
 
     # Valida que el recurso exista y esté disponible, y que la fecha de devolución sea correcta al crear un préstamo
