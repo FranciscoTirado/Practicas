@@ -47,8 +47,7 @@ class Asset(Base):
     )
 
     location = relationship(
-        "modules.asset_lending.models.lending.Location",
-        foreign_keys=lambda: [Asset.location_id],
+        "modules.asset_lending.models.lending.Asset",
         back_populates="assets",
         info={"public": True, "recursive": False},
     )
@@ -61,8 +60,7 @@ class Asset(Base):
     )
 
     responsible_user = relationship(
-        "app.modules.core.models.user.User",
-        foreign_keys=lambda: [Asset.responsible_user_id],
+        "User",
         info={"public": True, "recursive": False},
     )
 
@@ -82,7 +80,6 @@ class Loan(Base):
 
     asset = relationship(
         "modules.asset_lending.models.lending.Asset",
-        foreign_keys=lambda: [Loan.asset_id],
         info={"public": True, "recursive": False},
     )
 
@@ -93,10 +90,8 @@ class Loan(Base):
         public=True,
     )
 
-    # Corregido: Ruta completa
     borrower = relationship(
-        "app.modules.core.models.user.User",
-        foreign_keys=lambda: [Loan.borrower_user_id],
+        "User",
         info={"public": True, "recursive": False},
     )
 

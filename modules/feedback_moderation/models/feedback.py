@@ -7,11 +7,10 @@ from sqlalchemy.dialects.postgresql import UUID
 from app.core.base import Base  # type: ignore
 from app.core.fields import field  # type: ignore
 
-
 suggestion_tag_rel = Table(
     "feedback_moderation_suggestion_tag_rel",
     Base.metadata,
-    Column("suggestion_id", Integer,ForeignKey("feedback_moderation_suggestion.id"),primary_key=True),
+    Column("suggestion_id", Integer, ForeignKey("feedback_moderation_suggestion.id"), primary_key=True),
     Column("tag_id", Integer, ForeignKey("feedback_moderation_tag.id"), primary_key=True),
     extend_existing=True,
 )
@@ -51,6 +50,7 @@ class Suggestion(Base):
     votes_count = field(Integer, default=0, public=True, editable=False, info={"label": {"es": "Votos"}})
 
     published_at = field(DateTime(timezone=True), required=False, public=True, editable=False)
+    
     reviewed_by_id = field(
         UUID,
         ForeignKey("core_user.id"),
@@ -59,15 +59,18 @@ class Suggestion(Base):
         editable=False,
     )
 
-    reviewed_by = relationship("app.modules.core.models.user.User")
+    reviewed_by = relationship(
+        "User", 
+        foreign_keys=[reviewed_by_id],
+        info={"public": False, "recursive": False}
+    )
 
     tags = relationship(
-    "modules.feedback_moderation.models.feedback.Tag",
-    secondary=suggestion_tag_rel,
-    back_populates="suggestions",
-    info={"public": True, "editable": True},
-)
-
+        "modules.feedback_moderation.models.feedback.Tag",
+        secondary=suggestion_tag_rel,
+        back_populates="suggestions",
+        info={"public": True, "editable": True},
+    )
 
 class Comment(Base):
     __tablename__ = "feedback_moderation_comment"
