@@ -60,8 +60,8 @@ class Suggestion(Base):
     )
 
     reviewed_by = relationship(
-        "User", 
-        foreign_keys=[reviewed_by_id],
+        "User",
+        foreign_keys="Suggestion.reviewed_by_id",
         info={"public": False, "recursive": False}
     )
 
