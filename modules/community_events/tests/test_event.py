@@ -7,7 +7,7 @@ from modules.community_events.services.registration import RegistrationService
 from modules.community_events.models.event import Event
 from modules.community_events.models.registration import Registration
 
-
+# Fixtures para servicios con repositorios mockeados
 @pytest.fixture
 def mock_event_service():
     instance = EventService(MagicMock())
@@ -15,7 +15,7 @@ def mock_event_service():
     instance.repo.session = MagicMock()
     return instance
 
-
+# Fixture para RegistrationService con repositorio mockeado
 @pytest.fixture
 def mock_registration_service():
     instance = RegistrationService(MagicMock())
@@ -23,7 +23,7 @@ def mock_registration_service():
     instance.repo.session = MagicMock()
     return instance
 
-
+# Tests para EventService
 @patch("modules.community_events.services.event.serialize")
 def test_publish_event_changes_status_and_visibility(mock_serialize, mock_event_service):
     event_stub = MagicMock(spec=Event)
@@ -43,7 +43,7 @@ def test_publish_event_changes_status_and_visibility(mock_serialize, mock_event_
     assert response["status"] == "published"
     assert response["is_public"] is True
 
-
+# Tests para RegistrationService
 @patch("modules.community_events.services.event.serialize")
 def test_cancel_event_hides_it_from_public(mock_serialize, mock_event_service):
     event_stub = MagicMock(spec=Event)
@@ -63,7 +63,7 @@ def test_cancel_event_hides_it_from_public(mock_serialize, mock_event_service):
     assert response["status"] == "cancelled"
     assert response["is_public"] is False
 
-
+# Tests para RegistrationService
 @patch("modules.community_events.services.registration.serialize")
 def test_checkin_success_for_confirmed_user(mock_serialize, mock_registration_service):
     reg_stub = MagicMock(spec=Registration)
@@ -78,7 +78,7 @@ def test_checkin_success_for_confirmed_user(mock_serialize, mock_registration_se
 
     assert response["checkin_at"] is not None
 
-
+# Verificar que no se permite hacer check-in a un usuario cancelado
 def test_checkin_fails_for_cancelled_user(mock_registration_service):
     reg_stub = MagicMock(spec=Registration)
     reg_stub.id = 11
@@ -89,7 +89,7 @@ def test_checkin_fails_for_cancelled_user(mock_registration_service):
     with pytest.raises(HTTPException):
         mock_registration_service.checkin(id=11)
 
-
+# Verificar que el método bulk_checkin actualiza correctamente múltiples registros
 def test_confirm_registration(mock_registration_service):
     reg = MagicMock(spec=Registration)
     reg.id = 1
@@ -103,7 +103,7 @@ def test_confirm_registration(mock_registration_service):
         assert result["status"] == "confirmed"
         assert reg.status == "confirmed"
 
-
+# Verificar que el método move_waitlist actualiza el estado a waitlist
 def test_move_to_waitlist(mock_registration_service):
     reg = MagicMock(spec=Registration)
     reg.id = 1
@@ -117,7 +117,7 @@ def test_move_to_waitlist(mock_registration_service):
         assert result["status"] == "waitlist"
         assert reg.status == "waitlist"
 
-
+# Verificar que el método bulk_checkin actualiza correctamente múltiples registros
 def test_bulk_checkin(mock_registration_service):
     reg1 = MagicMock(spec=Registration)
     reg1.id = 1
@@ -128,7 +128,8 @@ def test_bulk_checkin(mock_registration_service):
     reg2.id = 2
     reg2.status = "confirmed"
     reg2.checkin_at = None
-
+    
+    # Simular que el método get devuelve reg1 para id=1 y reg2 para id=2
     def get_mock(model, id):
         return reg1 if id == 1 else reg2
 

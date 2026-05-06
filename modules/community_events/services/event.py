@@ -10,7 +10,7 @@ class SessionService(BaseService):
 
 class EventService(BaseService):
     from ..models.event import Event
-
+    # Método para convertir fechas en formato dd/mm/yyyy a objetos datetime
     def sanitize_dates(self, payload: dict) -> dict:
         import datetime as dt
         for key in ("start_at", "end_at"):
@@ -22,19 +22,20 @@ class EventService(BaseService):
                 except ValueError:
                     pass
         return payload
-
-    def create(self, obj):  # type: ignore[override]
+    # Sobrescribir los métodos de creación y actualización para sanitizar las fechas
+    def create(self, obj): 
         if not isinstance(obj, dict):
             return super().create(obj)
         data_copy = self.sanitize_dates(dict(obj))
         return super().create(data_copy)
-
-    def update(self, id: int, obj):  # type: ignore[override]
+    # Sobrescribir el método de actualización para sanitizar las fechas
+    def update(self, id: int, obj):  
         if not isinstance(obj, dict):
             return super().update(id, obj)
         data_copy = self.sanitize_dates(dict(obj))
         return super().update(id, data_copy)
 
+    # Acciones para gestión de eventos
     @exposed_action("write", groups=["community_events_group_staff", "core_group_superadmin"])
     def publish_event(self, id: int, note: str | None = None) -> dict:
         record = self.repo.session.get(self.Event, int(id))
@@ -46,7 +47,7 @@ class EventService(BaseService):
         self.repo.session.add(record)
         self.repo.session.commit()
         return serialize(record)
-
+    # Acción para cerrar inscripciones de un evento
     @exposed_action("write", groups=["community_events_group_staff", "core_group_superadmin"])
     def close_registration(self, id: int, reason: str | None = None) -> dict:
         record = self.repo.session.get(self.Event, int(id))
@@ -57,7 +58,7 @@ class EventService(BaseService):
         self.repo.session.add(record)
         self.repo.session.commit()
         return serialize(record)
-
+    # Acción para cancelar un evento
     @exposed_action("write", groups=["community_events_group_staff", "core_group_superadmin"])
     def cancel_event(self, id: int, reason: str) -> dict:
         record = self.repo.session.get(self.Event, int(id))
@@ -69,7 +70,7 @@ class EventService(BaseService):
         self.repo.session.add(record)
         self.repo.session.commit()
         return serialize(record)
-
+    # Acción para reabrir un evento cerrado o cancelado
     @exposed_action("write", groups=["community_events_group_staff", "core_group_superadmin"])
     def reopen_event(self, id: int) -> dict:
         record = self.repo.session.get(self.Event, int(id))

@@ -5,12 +5,13 @@ from modules.feedback_moderation.services.feedback import SuggestionService
 from modules.feedback_moderation.models.feedback import Suggestion
 
 @pytest.fixture
+# Fixture para SuggestionService con repositorio mockeado
 def mock_service():
     service = SuggestionService(MagicMock())
     service.repo = MagicMock()
     service.repo.session = MagicMock()
     return service
-
+# Tests para acciones de gestión de sugerencias (publicar, rechazar, fusionar, reabrir)
 def test_publish_suggestion_success(mock_service):
     # Setup
     suggestion_stub = MagicMock(spec=Suggestion)
@@ -21,14 +22,14 @@ def test_publish_suggestion_success(mock_service):
         result = mock_service.publish(1)
         assert suggestion_stub.status == "published"
         assert result["status"] == "published"
-
+# Tests para casos de error y lógica adicional (publicar algo ya publicado, votar, obtener cola de moderación)
 def test_publish_suggestion_not_found(mock_service):
     mock_service.repo.session.get.return_value = None
     
     with pytest.raises(HTTPException) as exc:
         mock_service.publish(999)
     assert exc.value.status_code == 404
-
+# Test para publicar algo que ya está publicado (debe lanzar error)
 def test_archive_suggestion(mock_service):
     suggestion_stub = MagicMock(spec=Suggestion)
     suggestion_stub.status = "published"
@@ -40,7 +41,7 @@ def test_archive_suggestion(mock_service):
             result = mock_service.archive(1)
             assert suggestion_stub.status == "archived"
 
-# --- CASOS DE ERROR Y LÓGICA ---
+# Test para intentar publicar algo que ya está publicado (debe lanzar error)
 def test_publish_already_published_raises_error(mock_service):
     """No se puede publicar algo que ya está publicado."""
     suggestion_mock = MagicMock()
@@ -53,7 +54,7 @@ def test_publish_already_published_raises_error(mock_service):
     
     assert exc.value.status_code == 400
 
-
+# Test para votar por una sugerencia (incremento del contador de votos)
 def test_vote_suggestion_success(mock_service):
     """Prueba la lógica de votación (incremento)."""
     suggestion_stub = MagicMock(spec=Suggestion)
@@ -70,7 +71,7 @@ def test_vote_suggestion_success(mock_service):
         assert suggestion_stub.votes_count == 11
         assert result["votes_count"] == 11
 
-
+# Test para obtener la cola de moderación filtrada por estado
 def test_get_moderation_queue(mock_service):
     """Prueba los filtros de búsqueda (la query)."""
     # Simulamos que la query devuelve una lista de mocks

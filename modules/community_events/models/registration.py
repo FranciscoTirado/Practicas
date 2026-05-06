@@ -15,34 +15,39 @@ class Registration(Base):
         ForeignKey("community_events_event.id", ondelete="CASCADE"),
         required=True,
         public=True,
-        editable=True
+        editable=True,
+        info = {"label": "Id del evento"}
         )
     session_id = field(
         Integer,
         ForeignKey("community_events_session.id", ondelete="SET NULL"),
         required=False,
         public=True,
-        editable=True
+        editable=True,
+        info = {"label": "Id de la sesión"}
         )
-    
+
     attendee_name = field(
         String(150),
         required=True,
         public=True,
-        editable=True
+        editable=True,
+        info = {"label": "Nombre del asistente"}
         )
     attendee_email = field(
         String(150),
         required=True,
         public=True,
-        editable=True
+        editable=True,
+        info = {"label": "Email del asistente"}
         )
     attendee_user_id = field(
         UUID,
         ForeignKey("core_user.id", ondelete="SET NULL"),
         required=False,
         public=True,
-        editable=True
+        editable=True,
+        info = {"label": "Usuario del asistente"}
         )
     status = field(
         String(20),
@@ -61,17 +66,20 @@ class Registration(Base):
         DateTime(timezone=True),
         required=False,
         public=True,
-        editable=False
+        editable=False,
+        info = {"label": "Fecha de registro(dd/mm/aaaa)"}
         )
     checkin_at = field(
         DateTime(timezone=True),
         required=False,
         public=True,
-        editable=False
+        editable=False,
+        info = {"label": "Fecha de check-in(dd/mm/aaaa)"}
         )
     notes = field(
         Text,
         required=False,
         public=True,
-        editable=True
+        editable=True,
+        info = {"label": "Notas del registro"}
         )

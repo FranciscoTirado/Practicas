@@ -9,13 +9,12 @@ from app.core.services import exposed_action  # type: ignore
 class RegistrationService(BaseService):
     from ..models.registration import Registration
     from ..models.event import Event
-
+    # Sobrescribir el método de creación para validar el evento y registrar la fecha de inscripción
     def create(self, obj):
         if not isinstance(obj, dict):
             return super().create(obj)
 
         entry = dict(obj)
-
         event_id = entry.get("event_id")
 
         if event_id is None:
@@ -28,14 +27,14 @@ class RegistrationService(BaseService):
         if event.status != "published":
             raise HTTPException(400, "El evento no está publicado")
 
-        # timestamp automático
+        # registrar la fecha de registro
         entry["registered_at"] = dt.datetime.now(dt.timezone.utc)
 
         # estado por defecto
         entry["status"] = entry.get("status", "pending")
 
         return super().create(entry)
-
+    # Acción para confirmar una inscripción
     @exposed_action("write", groups=["community_events_group_staff", "core_group_superadmin"])
     def confirm(self, id: int, note: str | None = None) -> dict:
         record = self.repo.session.get(self.Registration, int(id))
@@ -52,6 +51,7 @@ class RegistrationService(BaseService):
 
         return serialize(record)
 
+    # Acción para mover un registro a lista de espera 
     @exposed_action("write", groups=["community_events_group_staff", "core_group_superadmin"])
     def move_waitlist(self, id: int, note: str | None = None) -> dict:
         record = self.repo.session.get(self.Registration, int(id))
@@ -64,7 +64,7 @@ class RegistrationService(BaseService):
         self.repo.session.commit()
 
         return serialize(record)
-
+    # Acción para cancelar una inscripción
     @exposed_action("write", groups=["community_events_group_staff", "core_group_superadmin"])
     def checkin(self, id: int, source: str = "manual") -> dict:
         record = self.repo.session.get(self.Registration, int(id))
@@ -81,7 +81,7 @@ class RegistrationService(BaseService):
         self.repo.session.commit()
 
         return serialize(record)
-
+    # Acción para realizar check-in masivo (ej: desde una lista de espera)
     @exposed_action("write", groups=["community_events_group_staff", "core_group_superadmin"])
     def bulk_checkin(self, ids: list[int]) -> dict:
         validated = 0

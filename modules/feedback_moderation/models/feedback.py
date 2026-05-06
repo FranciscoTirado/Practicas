@@ -21,9 +21,20 @@ class Suggestion(Base):
     __model__ = "suggestion"
     __service__ = "modules.feedback_moderation.services.feedback.SuggestionService"
 
-    title = field(String(255), required=True, public=True, editable=True)
-    content = field(Text, required=True, public=True, editable=True)
-
+    title = field(
+        String(255),
+        required=True, 
+        public=True, 
+        editable=True,
+        info = {"label": "Título de la sugerencia"}
+        )
+    content = field(
+        Text, 
+        required=True, 
+        public=True, 
+        editable=True,
+        info = {"label": "Contenido de la sugerencia"}
+        )
     status = field(
         String(20),
         default="pending",
@@ -40,31 +51,58 @@ class Suggestion(Base):
             ],
         },
     )
-
-    author_email = field(String(255), required=False, public=True, editable=True)
-    author_name = field(String(255), required=False, public=True, editable=True)
-
-    is_public = field(Boolean, default=True, public=True, editable=True)
-    moderation_note = field(Text, required=False, public=False, editable=False)
-
-    votes_count = field(Integer, default=0, public=True, editable=False, info={"label": {"es": "Votos"}})
-
-    published_at = field(DateTime(timezone=True), required=False, public=True, editable=False)
-    
+    author_email = field(
+        String(255),
+        required=False, 
+        public=True, 
+        editable=True,
+        label = {"es": "Email del autor"}
+        )
+    author_name = field(
+        String(255), 
+        required=False, 
+        public=True, 
+        editable=True,
+        label = {"es": "Nombre del autor"}
+        )
+    is_public = field(
+        Boolean, 
+        default=True, 
+        public=True, 
+        editable=True,
+        info = {"label": "¿Visible públicamente?"}
+        )
+    moderation_note = field(
+        Text, 
+        required=False, 
+        public=False, 
+        editable=False,
+        info = {"label": "Nota de moderación"}
+        )
+    votes_count = field(
+        Integer, 
+        default=0, 
+        public=True, editable=False, info={"label": {"es": "Votos"}})
+    published_at = field(
+        DateTime(timezone=True), 
+        required=False, 
+        public=True, 
+        editable=False,
+        info = {"label": "Fecha de publicación(dd/mm/aaaa)"}
+        )
     reviewed_by_id = field(
         UUID,
         ForeignKey("core_user.id"),
         required=False,
         public=False,
         editable=False,
+        info = {"label": "Revisado por"}
     )
-
     reviewed_by = relationship(
         "User",
         foreign_keys="Suggestion.reviewed_by_id",
         info={"public": False, "recursive": False}
     )
-
     tags = relationship(
         "modules.feedback_moderation.models.feedback.Tag",
         secondary=suggestion_tag_rel,
@@ -84,15 +122,19 @@ class Comment(Base):
         required=True,
         public=True,
         editable=True,
-    )
-
+        info = {"label": "Id de la sugerencia"}
+        )
     suggestion = relationship(
         "modules.feedback_moderation.models.feedback.Suggestion",
         info={"public": True, "recursive": False},
     )
-
-    content = field(Text, required=True, public=True, editable=True)
-
+    content = field(
+        Text, 
+        required=True, 
+        public=True, 
+        editable=True,
+        info = {"label": "Contenido del comentario"}
+        )
     status = field(
         String(20),
         default="pending",
@@ -100,6 +142,7 @@ class Comment(Base):
         public=True,
         editable=False,
         info={
+            "label": "Estado",
             "choices": [
                 {"label": "Pendiente", "value": "pending"},
                 {"label": "Publicado", "value": "published"},
@@ -107,11 +150,34 @@ class Comment(Base):
             ],
         },
     )
-
-    author_email = field(String(255), required=False, public=True, editable=True)
-    is_public = field(Boolean, default=True, public=True, editable=True)
-    moderation_note = field(Text, required=False, public=False, editable=False)
-    published_at = field(DateTime(timezone=True), required=False, public=True, editable=False)
+    author_email = field(
+        String(255), 
+        required=False, 
+        public=True, 
+        editable=True,
+        info = {"label": "Email del autor"}
+        )
+    is_public = field(
+        Boolean, 
+        default=True, 
+        public=True, 
+        editable=True,
+        info = {"label": "¿Visible públicamente?"}
+        )
+    moderation_note = field(
+        Text, 
+        required=False, 
+        public=False, 
+        editable=False,
+        info = {"label": "Nota de moderación"}
+        )
+    published_at = field(
+        DateTime(timezone=True), 
+        required=False, 
+        public=True, 
+        editable=False,
+        info = {"label": "Fecha de publicación(dd/mm/aaaa)"}
+        )
 
 
 class Tag(Base):
@@ -120,12 +186,31 @@ class Tag(Base):
     __model__ = "tag"
     __service__ = "modules.feedback_moderation.services.feedback.TagService"
 
-    name = field(String(100), required=True, public=True, editable=True)
-    slug = field(String(100), required=True, public=True, editable=True, unique=True)
-    color = field(String(20), required=False, public=True, editable=True)
-
+    name = field(
+        String(100), 
+        required=True, 
+        public=True, 
+        editable=True,
+        info = {"label": "Nombre de la etiqueta"}
+        )
+    slug = field(
+        String(100), 
+        required=True, 
+        public=True, 
+        editable=True, 
+        unique=True,
+        info = {"label": "Slug de la etiqueta"}
+        )
+    color = field(
+        String(20), 
+        required=False, 
+        public=True, 
+        editable=True,
+        info = {"label": "Color de la etiqueta"}
+        )
     suggestions = relationship(
         "modules.feedback_moderation.models.feedback.Suggestion",
         secondary=suggestion_tag_rel,
         back_populates="tags",
+        info={"public": True, "editable": True},
     )

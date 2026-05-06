@@ -15,37 +15,46 @@ class Session(Base):
         ForeignKey("community_events_event.id", ondelete="CASCADE"),
         required=True,
         public=True,
-        editable=True
+        editable=True,
+        info = {"label": "Id del evento"}
         )
     title = field(
         String(200),
         required=True,
         public=True,
-        editable=True
+        editable=True,
+        info = {"label": "Título de la sesión"}
         )
- 
     speaker_name = field(
         String(150),
         required=False,
         public=True,
-        editable=True
+        editable=True,
+        info = {"label": "Nombre del ponente"}
         )
     room = field(
         String(100),
         required=False,
         public=True,
-        editable=True
+        editable=True,
+        info = {"label": "Sala"}
         )
     capacity = field(
         Integer,
         required=False,
         public=True,
-        editable=True
+        editable=True,
+        info = {"label": "Capacidad"}
         )
     status = field(
         String(20),
         required=True,
         default="active",
         public=True,
-        editable=True
+        editable=True,
+        info = {"label": "Estado", "choices": [
+             {"label": "Activa", "value": "active"},
+             {"label": "Cancelada", "value": "cancelled"},
+             {"label": "Finalizada", "value": "finished"},
+        ]}
         )

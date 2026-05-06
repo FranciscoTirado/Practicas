@@ -95,7 +95,6 @@ class Event(Base):
         editable=True,
         info = {"label": "Organizado por"}
         )
-
     sessions = relationship(
         "modules.community_events.models.session.Session",
         cascade="all, delete-orphan"

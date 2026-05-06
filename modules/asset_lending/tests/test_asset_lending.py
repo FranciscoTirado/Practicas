@@ -11,10 +11,8 @@ def mock_service():
     service.repo.session = MagicMock()
     return service
 
-# --- TESTS DE CREACIÓN (CHECKOUT) ---
-
+# Test para crear un préstamo exitosamente (asset disponible)
 def test_create_loan_success(mock_service):
-    # Setup: Asset disponible
     asset_stub = MagicMock(spec=Asset)
     asset_stub.status = "available"
     mock_service.repo.session.get.return_value = asset_stub
@@ -28,8 +26,9 @@ def test_create_loan_success(mock_service):
         assert asset_stub.status == "loaned"
         assert result["status"] == "open"
 
+# Test para crear un préstamo con asset no encontrado (debe lanzar error)
 def test_create_loan_asset_not_found(mock_service):
-    # Setup: No se encuentra el asset
+    
     mock_service.repo.session.get.return_value = None
     
     with pytest.raises(HTTPException) as exc:
@@ -37,9 +36,8 @@ def test_create_loan_asset_not_found(mock_service):
     assert exc.value.status_code == 404
 
 # --- TESTS DE DEVOLUCIÓN (RETURN) ---
-
+# Test para devolver un préstamo exitosamente (asset en estado loaned)
 def test_return_asset_success(mock_service):
-    # Setup
     loan_stub = MagicMock(spec=Loan)
     loan_stub.status = "open"
     asset_stub = MagicMock(spec=Asset)
@@ -53,8 +51,8 @@ def test_return_asset_success(mock_service):
         assert asset_stub.status == "available"
         assert loan_stub.status == "returned"
 
+# Test para devolver un préstamo que ya fue devuelto (debe lanzar error)
 def test_return_already_returned_loan(mock_service):
-    # Setup: Préstamo ya devuelto
     loan_stub = MagicMock(spec=Loan)
     loan_stub.status = "returned"
     mock_service.repo.session.get.return_value = loan_stub
